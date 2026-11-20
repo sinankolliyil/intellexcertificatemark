@@ -1,0 +1,3454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Intellex Student Assessment Tool</title>
+  <meta name="description" content="Standardized student and trainee assessment platform across five core engineering categories with comprehensive rubric guidance.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232563eb'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
+  <style>
+    /* CSS RESET & CORE VARIABLES */
+    :root {
+      --primary: #1e3a8a;
+      --primary-hover: #172554;
+      --primary-light: #eff6ff;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --secondary: #0ea5e9;
+      --success: #10b981;
+      --success-light: #ecfdf5;
+      --success-text: #065f46;
+      --warning: #f59e0b;
+      --warning-light: #fffbeb;
+      --warning-text: #92400e;
+      --danger: #ef4444;
+      --danger-light: #fef2f2;
+      --danger-text: #991b1b;
+      --indigo: #6366f1;
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-300: #cbd5e1;
+      --slate-400: #94a3b8;
+      --slate-500: #64748b;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-800: #1e293b;
+      --slate-900: #0f172a;
+      --slate-950: #020617;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", "Helvetica Neue", Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.06);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.08);
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-full: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--slate-50);
+      color: var(--slate-900);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* TYPOGRAPHY */
+    h1, h2, h3, h4, h5, h6 {
+      color: var(--slate-900);
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    p {
+      color: var(--slate-600);
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* HEADER & BRANDING */
+    .app-header {
+      background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+      color: white;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #2563eb 0%, #38bdf8 100%);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+      flex-shrink: 0;
+    }
+
+    .brand-logo svg {
+      width: 24px;
+      height: 24px;
+      color: white;
+    }
+
+    .brand-text h1 {
+      color: white;
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .brand-badge {
+      background: rgba(255, 255, 255, 0.15);
+      font-size: 0.7rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: var(--radius-full);
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      color: #93c5fd;
+    }
+
+    .brand-text p {
+      color: var(--slate-400);
+      font-size: 0.75rem;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .storage-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: #a7f3d0;
+      font-size: 0.75rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: var(--radius-full);
+      font-weight: 500;
+    }
+
+    .storage-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #10b981;
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 8px #10b981;
+    }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.55rem 1rem;
+      border-radius: var(--radius-md);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      min-height: 40px;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-secondary {
+      background: var(--slate-700);
+      color: white;
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-secondary:hover {
+      background: var(--slate-600);
+    }
+
+    .btn-white {
+      background: white;
+      color: var(--slate-800);
+      border-color: var(--slate-300);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-white:hover {
+      background: var(--slate-100);
+      border-color: var(--slate-400);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border-color: var(--slate-300);
+      color: var(--slate-700);
+    }
+
+    .btn-outline:hover {
+      background: var(--slate-100);
+      border-color: var(--slate-400);
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #059669;
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .btn-danger-outline {
+      background: transparent;
+      border-color: #fca5a5;
+      color: var(--danger);
+    }
+
+    .btn-danger-outline:hover {
+      background: var(--danger-light);
+      border-color: var(--danger);
+    }
+
+    .btn-sm {
+      padding: 0.35rem 0.65rem;
+      font-size: 0.775rem;
+      min-height: 32px;
+    }
+
+    .btn-lg {
+      padding: 0.75rem 1.4rem;
+      font-size: 0.95rem;
+      min-height: 48px;
+    }
+
+    .btn-icon {
+      padding: 0.5rem;
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-md);
+    }
+
+    .btn svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    /* BADGES & CHIPS */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: var(--radius-full);
+      white-space: nowrap;
+    }
+
+    .badge-slate {
+      background: var(--slate-200);
+      color: var(--slate-700);
+    }
+
+    .badge-blue {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .badge-green {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .badge-yellow {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .badge-orange {
+      background: #ffedd5;
+      color: #9a3412;
+    }
+
+    .badge-red {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .badge-purple {
+      background: #ede9fe;
+      color: #5b21b6;
+    }
+
+    .badge-cyan {
+      background: #cffafe;
+      color: #155e75;
+    }
+
+    /* SCORING BANDS */
+    .band-unsatisfactory { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+    .band-heavy-guidance { background: #ffedd5; color: #9a3412; border: 1px solid #fdba74; }
+    .band-basic-ability { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+    .band-autonomous { background: #ecfdf5; color: #065f46; border: 1px solid #6ee7b7; }
+    .band-strong-independent { background: #ede9fe; color: #5b21b6; border: 1px solid #c4b5fd; }
+    .band-exceptional { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+    .band-unassessed { background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; }
+
+    /* LAYOUT CONTAINER */
+    .main-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 3rem 1.25rem;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* LOCAL STORAGE DEVICE NOTICE BANNER */
+    .storage-notice-banner {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid var(--accent);
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-md);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      font-size: 0.825rem;
+      color: var(--slate-700);
+    }
+
+    .storage-notice-banner svg {
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* STATS RIBBON */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      border: 1px solid var(--slate-200);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .stat-icon.blue { background: #eff6ff; color: var(--accent); }
+    .stat-icon.green { background: #ecfdf5; color: var(--success); }
+    .stat-icon.amber { background: #fffbeb; color: var(--warning); }
+    .stat-icon.purple { background: #f5f3ff; color: var(--indigo); }
+
+    .stat-content h3 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 0.2rem;
+    }
+
+    .stat-content p {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--slate-500);
+    }
+
+    /* FILTER & ACTION TOOLBAR */
+    .toolbar {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1;
+      min-width: 260px;
+    }
+
+    .search-box svg {
+      position: absolute;
+      left: 0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--slate-400);
+      width: 18px;
+      height: 18px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 0.6rem 0.85rem 0.6rem 2.4rem;
+      border: 1px solid var(--slate-300);
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      background: var(--slate-50);
+      color: var(--slate-900);
+      transition: all 0.15s ease;
+      min-height: 42px;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-group select {
+      padding: 0.6rem 2rem 0.6rem 0.85rem;
+      border: 1px solid var(--slate-300);
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      font-weight: 500;
+      background: white;
+      color: var(--slate-800);
+      min-height: 42px;
+      cursor: pointer;
+    }
+
+    .filter-group select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    /* STUDENTS LIST / CARDS */
+    .student-card {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.15s ease;
+      display: grid;
+      grid-template-columns: 2fr 1.5fr 1.5fr 2fr;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .student-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--slate-300);
+    }
+
+    .student-info {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .student-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--slate-700), var(--slate-900));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .student-name-block h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--slate-900);
+      margin-bottom: 0.15rem;
+    }
+
+    .student-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      font-size: 0.775rem;
+      color: var(--slate-500);
+    }
+
+    .student-track-badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--slate-700);
+      background: var(--slate-100);
+      padding: 0.2rem 0.5rem;
+      border-radius: var(--radius-sm);
+      display: inline-block;
+      margin-bottom: 0.25rem;
+    }
+
+    .student-evaluator-meta {
+      font-size: 0.775rem;
+      color: var(--slate-500);
+    }
+
+    .progress-col {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.775rem;
+      font-weight: 600;
+      color: var(--slate-600);
+    }
+
+    .progress-bar-bg {
+      background: var(--slate-200);
+      height: 8px;
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: var(--radius-full);
+      transition: width 0.3s ease;
+    }
+
+    .progress-bar-fill.complete {
+      background: var(--success);
+    }
+
+    .score-summary-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .student-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* EMPTY STATE */
+    .empty-state {
+      background: white;
+      border: 2px dashed var(--slate-300);
+      border-radius: var(--radius-xl);
+      padding: 4rem 2rem;
+      text-align: center;
+      margin: 2rem 0;
+    }
+
+    .empty-state svg {
+      width: 64px;
+      height: 64px;
+      color: var(--slate-400);
+      margin-bottom: 1rem;
+    }
+
+    .empty-state h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .empty-state p {
+      max-width: 450px;
+      margin: 0 auto 1.5rem auto;
+      font-size: 0.9rem;
+    }
+
+    /* ASSESSMENT VIEW LAYOUT */
+    .assessment-header {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-xl);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .assessment-nav-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--slate-200);
+      flex-wrap: wrap;
+    }
+
+    .student-header-title {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .student-header-title h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--slate-900);
+    }
+
+    .student-details-strip {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      font-size: 0.85rem;
+      color: var(--slate-600);
+    }
+
+    .detail-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .detail-item strong {
+      color: var(--slate-900);
+    }
+
+    /* CATEGORY TABS */
+    .category-tabs-nav {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.5rem;
+      scrollbar-width: thin;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .cat-tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.75rem 1rem;
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--slate-700);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+      box-shadow: var(--shadow-sm);
+      min-height: 48px;
+    }
+
+    .cat-tab-btn:hover {
+      border-color: var(--slate-300);
+      background: var(--slate-100);
+    }
+
+    .cat-tab-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      box-shadow: 0 4px 10px rgba(30, 58, 138, 0.25);
+    }
+
+    .cat-tab-badge {
+      font-size: 0.75rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: var(--radius-full);
+      background: var(--slate-100);
+      color: var(--slate-700);
+      font-weight: 700;
+    }
+
+    .cat-tab-btn.active .cat-tab-badge {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+
+    .cat-tab-badge.complete {
+      background: #10b981;
+      color: white;
+    }
+
+    /* CRITERION CARD */
+    .criterion-card {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.15s ease;
+    }
+
+    .criterion-card:hover {
+      border-color: var(--slate-300);
+      box-shadow: var(--shadow-md);
+    }
+
+    .criterion-card.is-assessed {
+      border-left: 4px solid var(--success);
+    }
+
+    .criterion-card.is-unassessed {
+      border-left: 4px solid var(--slate-400);
+    }
+
+    .criterion-card.has-error {
+      border-left: 4px solid var(--danger);
+      background: #fffafa;
+    }
+
+    .criterion-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 0.85rem;
+      flex-wrap: wrap;
+    }
+
+    .criterion-title-wrap {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .criterion-title-wrap h4 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--slate-900);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .criterion-max-pill {
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: var(--slate-100);
+      color: var(--slate-700);
+      padding: 0.2rem 0.55rem;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--slate-200);
+    }
+
+    .mark-entry-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .input-mark-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .mark-input {
+      width: 90px;
+      padding: 0.6rem 0.75rem;
+      font-size: 1.15rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      text-align: center;
+      border: 2px solid var(--slate-300);
+      border-radius: var(--radius-md);
+      color: var(--slate-900);
+      background: white;
+      min-height: 44px;
+    }
+
+    .mark-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .mark-input.error {
+      border-color: var(--danger);
+      background: #fff5f5;
+    }
+
+    .quick-preset-btns {
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-preset {
+      padding: 0.4rem 0.65rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: 1px solid var(--slate-200);
+      background: var(--slate-50);
+      border-radius: var(--radius-sm);
+      color: var(--slate-700);
+      cursor: pointer;
+      min-height: 36px;
+    }
+
+    .btn-preset:hover {
+      background: var(--slate-200);
+      border-color: var(--slate-300);
+    }
+
+    .btn-preset.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .validation-error-msg {
+      font-size: 0.8rem;
+      color: var(--danger);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      margin-top: 0.35rem;
+    }
+
+    .comment-box {
+      margin-bottom: 0.85rem;
+    }
+
+    .comment-box label {
+      display: block;
+      font-size: 0.775rem;
+      font-weight: 600;
+      color: var(--slate-600);
+      margin-bottom: 0.3rem;
+    }
+
+    .comment-textarea {
+      width: 100%;
+      min-height: 70px;
+      padding: 0.65rem;
+      border: 1px solid var(--slate-300);
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 0.85rem;
+      color: var(--slate-800);
+      background: var(--slate-50);
+      resize: vertical;
+    }
+
+    .comment-textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    /* GUIDANCE ACCORDION */
+    .guidance-accordion {
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: #fafaf9;
+    }
+
+    .guidance-toggle {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      background: #f8fafc;
+      border: none;
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--slate-700);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .guidance-toggle:hover {
+      background: var(--slate-100);
+    }
+
+    .guidance-toggle svg {
+      transition: transform 0.2s ease;
+      color: var(--slate-400);
+    }
+
+    .guidance-toggle.open svg {
+      transform: rotate(180deg);
+    }
+
+    .guidance-content {
+      padding: 1rem;
+      border-top: 1px solid var(--slate-200);
+      font-size: 0.825rem;
+      color: var(--slate-700);
+      display: none;
+      background: white;
+    }
+
+    .guidance-content.open {
+      display: block;
+    }
+
+    .guidance-section {
+      margin-bottom: 0.75rem;
+    }
+
+    .guidance-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .guidance-section h5 {
+      font-size: 0.825rem;
+      font-weight: 700;
+      color: var(--slate-900);
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .guidance-section p, .guidance-section pre {
+      font-size: 0.825rem;
+      color: var(--slate-600);
+      white-space: pre-line;
+      line-height: 1.45;
+    }
+
+    .fallback-box {
+      background: #fffbeb;
+      border: 1px solid #fef3c7;
+      border-left: 3px solid var(--warning);
+      padding: 0.65rem 0.85rem;
+      border-radius: var(--radius-sm);
+      margin-top: 0.5rem;
+      font-size: 0.825rem;
+    }
+
+    .fallback-box strong {
+      color: #92400e;
+    }
+
+    /* CATEGORY FOOTER NAV */
+    .category-footer-bar {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .cat-subtotal-info {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--slate-800);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* SUMMARY TAB VIEW */
+    .summary-hero-card {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      color: white;
+      border-radius: var(--radius-xl);
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-md);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .summary-score-hero h3 {
+      color: #93c5fd;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .summary-score-hero .big-score {
+      font-size: 3.25rem;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      line-height: 1;
+      color: white;
+      margin-bottom: 0.5rem;
+    }
+
+    .summary-score-hero .big-score span {
+      font-size: 1.5rem;
+      color: #93c5fd;
+      font-weight: 600;
+    }
+
+    .summary-level-display {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .summary-level-pill {
+      font-size: 1.25rem;
+      font-weight: 800;
+      padding: 0.6rem 1.25rem;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: fit-content;
+    }
+
+    .summary-categories-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .cat-summary-card {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .cat-summary-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .cat-summary-card-header h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .unassessed-alert-box {
+      background: #fffbeb;
+      border: 1px solid #fef3c7;
+      border-left: 4px solid var(--warning);
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius-lg);
+      margin-bottom: 1.5rem;
+      color: #92400e;
+    }
+
+    .unassessed-alert-box h4 {
+      color: #78350f;
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .missing-criteria-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.75rem;
+    }
+
+    .missing-chip {
+      background: white;
+      border: 1px solid #fcd34d;
+      color: #92400e;
+      font-size: 0.775rem;
+      font-weight: 600;
+      padding: 0.25rem 0.6rem;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .missing-chip:hover {
+      background: #fef3c7;
+    }
+
+    /* MODALS */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: white;
+      border-radius: var(--radius-xl);
+      max-width: 600px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--slate-200);
+      animation: modalIn 0.2s ease-out;
+    }
+
+    .modal-card.modal-lg {
+      max-width: 950px;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--slate-200);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      background: white;
+      z-index: 10;
+    }
+
+    .modal-header h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--slate-200);
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      background: var(--slate-50);
+      border-bottom-left-radius: var(--radius-xl);
+      border-bottom-right-radius: var(--radius-xl);
+    }
+
+    /* FORM STYLES */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.825rem;
+      font-weight: 600;
+      color: var(--slate-700);
+      margin-bottom: 0.35rem;
+    }
+
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      border: 1px solid var(--slate-300);
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      font-family: inherit;
+      color: var(--slate-900);
+      background: white;
+      min-height: 42px;
+    }
+
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    /* TOAST NOTIFICATION */
+    .toast-container {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: var(--slate-900);
+      color: white;
+      padding: 0.75rem 1.25rem;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      pointer-events: auto;
+      animation: toastIn 0.25s ease-out;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .toast.success { background: #065f46; border-color: #059669; }
+    .toast.error { background: #991b1b; border-color: #dc2626; }
+    .toast.info { background: #1e3a8a; border-color: #2563eb; }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* PRINTABLE ASSESSMENT REPORT */
+    #printableReportArea {
+      display: none;
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #printableReportArea, #printableReportArea * {
+        visibility: visible;
+      }
+      #printableReportArea {
+        display: block !important;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: white;
+        color: #000;
+        padding: 0;
+        margin: 0;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .app-header, .main-container, .modal-overlay, .toast-container {
+        display: none !important;
+      }
+      @page {
+        size: A4 portrait;
+        margin: 10mm;
+      }
+    }
+
+    .report-sheet {
+      font-family: var(--font-sans);
+      color: #0f172a;
+      line-height: 1.4;
+      background: white;
+      padding: 1.5rem;
+    }
+
+    .report-header-box {
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 1rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .report-title h2 {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #0f172a;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .report-title p {
+      color: #475569;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .report-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-sm);
+      padding: 0.85rem;
+      margin-bottom: 1.25rem;
+      font-size: 0.825rem;
+    }
+
+    .report-summary-boxes {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.5fr;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .report-metric-card {
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-sm);
+      padding: 0.75rem;
+      text-align: center;
+      background: white;
+    }
+
+    .report-metric-card .num {
+      font-size: 1.5rem;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      color: #0f172a;
+    }
+
+    .report-metric-card .lbl {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: #64748b;
+      font-weight: 700;
+    }
+
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.25rem;
+      font-size: 0.8rem;
+    }
+
+    .report-table th, .report-table td {
+      border: 1px solid #cbd5e1;
+      padding: 0.45rem 0.6rem;
+      text-align: left;
+    }
+
+    .report-table th {
+      background: #f1f5f9;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .report-category-row {
+      background: #e2e8f0;
+      font-weight: 800;
+      color: #0f172a;
+      page-break-after: avoid;
+    }
+
+    .report-table tr {
+      page-break-inside: avoid;
+    }
+
+    .report-sign-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #cbd5e1;
+      font-size: 0.8rem;
+      page-break-inside: avoid;
+    }
+
+    .sign-line {
+      border-bottom: 1px solid #000;
+      height: 40px;
+      margin-bottom: 0.4rem;
+    }
+
+    /* RESPONSIVE BREAKPOINTS */
+    @media (max-width: 1024px) {
+      .student-card {
+        grid-template-columns: 1fr 1fr;
+      }
+      .student-actions {
+        grid-column: span 2;
+        justify-content: flex-start;
+      }
+      .summary-hero-card {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header-inner {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .header-actions {
+        justify-content: flex-start;
+      }
+      .student-card {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+      .student-actions {
+        grid-column: span 1;
+      }
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      .assessment-nav-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .student-details-strip {
+        gap: 0.75rem;
+      }
+      .category-footer-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BRAND HEADER -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand-wrap" onclick="App.navigateTo('dashboard')">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>Intellex <span class="brand-badge">Assessment Tool</span></h1>
+          <p>Standardized Evaluation & Marks Management</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div class="storage-indicator" title="Data is preserved locally in your browser storage.">
+          <span class="storage-dot"></span>
+          <span>LocalStorage Active</span>
+        </div>
+
+        <button class="btn btn-secondary btn-sm" onclick="App.openBackupModal()" title="Backup or Restore Data in JSON format">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+          </svg>
+          Backup / Restore
+        </button>
+
+        <button class="btn btn-secondary btn-sm" onclick="App.exportAllStudentsCSV()" title="Export all students data to master CSV">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          Export All CSV
+        </button>
+
+        <button class="btn btn-primary btn-sm" onclick="App.openAddStudentModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          + Add Student
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN APP CONTAINER -->
+  <main class="main-container">
+
+    <!-- STORAGE NOTICE BANNER -->
+    <div class="storage-notice-banner">
+      <div style="display:flex; align-items:center; gap:0.6rem;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <span>
+          <strong>Storage Notice:</strong> All student assessments and marks are stored locally in your browser's persistent storage on this device. Data will remain after refreshing or reopening the browser. To transfer records between devices or safeguard your work, use the <strong>Backup / Restore</strong> option.
+        </span>
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="App.resetToSampleData()" style="flex-shrink:0;">
+        Reset Sample Data
+      </button>
+    </div>
+
+    <!-- VIEW CONTAINER: DASHBOARD -->
+    <section id="viewDashboard" style="display: block;">
+      <!-- STATS RIBBON -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon blue">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <h3 id="statTotalStudents">0</h3>
+            <p>Total Students Enrolled</p>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon green">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <h3 id="statFullyAssessed">0</h3>
+            <p>Fully Assessed (38/38 Done)</p>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon amber">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <h3 id="statPendingAssessment">0</h3>
+            <p>Pending / In-Progress</p>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon purple">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <h3 id="statClassAverage">—</h3>
+            <p>Completed Cohort Average</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOOLBAR -->
+      <div class="toolbar">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="searchInput" placeholder="Search by student name, ID, track, or evaluator..." oninput="App.renderStudentsList()">
+        </div>
+
+        <div class="filter-group">
+          <select id="statusFilter" onchange="App.renderStudentsList()">
+            <option value="all">All Assessment Statuses</option>
+            <option value="complete">Fully Assessed Only</option>
+            <option value="pending">Pending Completion Only</option>
+          </select>
+
+          <select id="sortBy" onchange="App.renderStudentsList()">
+            <option value="updated">Sort by: Recently Updated</option>
+            <option value="name">Sort by: Name (A-Z)</option>
+            <option value="scoreHigh">Sort by: Total Score (High-Low)</option>
+            <option value="scoreLow">Sort by: Total Score (Low-High)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- STUDENTS LIST CONTAINER -->
+      <div id="studentsListContainer">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- VIEW CONTAINER: STUDENT ASSESSMENT -->
+    <section id="viewAssessment" style="display: none;">
+      <!-- ASSESSMENT HEADER -->
+      <div class="assessment-header">
+        <div class="assessment-nav-row">
+          <button class="btn btn-outline btn-sm" onclick="App.navigateTo('dashboard')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Dashboard
+          </button>
+
+          <div class="score-summary-pill" id="assessHeaderScorePill">
+            <!-- Dynamic total and status -->
+          </div>
+
+          <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+            <button class="btn btn-primary btn-sm" id="btnDownloadMarksHeader" onclick="App.openDownloadModal(App.activeStudentId)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+              </svg>
+              Download Marks
+            </button>
+            <button class="btn btn-white btn-sm" onclick="App.openEditStudentModal(App.activeStudentId)" title="Edit student profile details">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 20h9"></path>
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+              </svg>
+              Edit Details
+            </button>
+          </div>
+        </div>
+
+        <div class="student-header-title">
+          <h2 id="assessStudentName">—</h2>
+          <span class="badge badge-slate" id="assessStudentId">—</span>
+          <span class="badge badge-blue" id="assessStudentTrack">—</span>
+          <span class="badge badge-purple" id="assessStudentBatch">—</span>
+        </div>
+
+        <div class="student-details-strip" style="margin-top:0.75rem;">
+          <div class="detail-item">
+            <span>Evaluator:</span>
+            <strong id="assessStudentEvaluator">—</strong>
+          </div>
+          <div class="detail-item">
+            <span>Date:</span>
+            <strong id="assessStudentDate">—</strong>
+          </div>
+          <div class="detail-item">
+            <span>Criteria Progress:</span>
+            <strong id="assessStudentProgress">—</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- CATEGORY TABS -->
+      <nav class="category-tabs-nav" id="categoryTabsNav">
+        <!-- Rendered dynamically -->
+      </nav>
+
+      <!-- TAB PANEL: CRITERIA LIST -->
+      <div id="criteriaListPanel">
+        <!-- Rendered dynamically for active category -->
+      </div>
+
+      <!-- TAB PANEL: OVERVIEW / SUMMARY -->
+      <div id="summaryTabPanel" style="display: none;">
+        <!-- Rendered dynamically in summary tab -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- PRINTABLE REPORT HIDDEN TEMPLATE -->
+  <div id="printableReportArea">
+    <!-- Populated dynamically before print -->
+  </div>
+
+  <!-- MODAL: REPORT PREVIEW MODAL -->
+  <div class="modal-overlay" id="reportPreviewModal">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <h3>Individual Student Assessment Report Preview</h3>
+        <div style="display:flex; gap:0.5rem; align-items:center;">
+          <button class="btn btn-primary btn-sm" onclick="window.print()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 9V2h12v7"></path>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+              <rect x="6" y="14" width="12" height="8"></rect>
+            </svg>
+            Print / Save PDF
+          </button>
+          <button class="btn btn-outline btn-sm btn-icon" onclick="App.closeModals()">✕</button>
+        </div>
+      </div>
+      <div class="modal-body" id="reportPreviewModalBody" style="background:var(--slate-100); padding:1rem;">
+        <!-- Injected report content -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="App.closeModals()">Close Preview</button>
+        <button type="button" class="btn btn-primary" onclick="window.print()">
+          Print / Save PDF Now
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD / EDIT STUDENT -->
+  <div class="modal-overlay" id="studentFormModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="studentModalTitle">Add New Student</h3>
+        <button class="btn btn-outline btn-sm btn-icon" onclick="App.closeModals()">✕</button>
+      </div>
+      <form id="studentForm" onsubmit="App.handleSaveStudent(event)">
+        <div class="modal-body">
+          <input type="hidden" id="formStudentDbId">
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="formStudentName">Full Name *</label>
+              <input type="text" id="formStudentName" required placeholder="e.g. Aarav Patel">
+            </div>
+            <div class="form-group">
+              <label for="formStudentId">Student / Trainee ID</label>
+              <input type="text" id="formStudentId" placeholder="e.g. ITX-2026-101 (Auto if blank)">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="formStudentEmail">Email Address</label>
+              <input type="email" id="formStudentEmail" placeholder="e.g. student@intellex.edu">
+            </div>
+            <div class="form-group">
+              <label for="formStudentTrack">Track / Specialization *</label>
+              <input type="text" id="formStudentTrack" required placeholder="e.g. Full Stack Web Engineering" value="Full Stack Web Engineering">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="formStudentBatch">Batch / Cohort *</label>
+              <input type="text" id="formStudentBatch" required placeholder="e.g. Cohort 2026-A" value="Cohort 2026-A">
+            </div>
+            <div class="form-group">
+              <label for="formAssessmentDate">Assessment Date</label>
+              <input type="date" id="formAssessmentDate">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="formEvaluator">Evaluator Name *</label>
+              <input type="text" id="formEvaluator" required placeholder="e.g. Dr. Marcus Vance">
+            </div>
+            <div class="form-group">
+              <label for="formEvaluatorTitle">Evaluator Role / Title</label>
+              <input type="text" id="formEvaluatorTitle" placeholder="e.g. Senior Engineering Lead">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="formStudentNotes">General Observations & Notes</label>
+            <textarea id="formStudentNotes" rows="2" placeholder="Initial baseline remarks, project assignment details, or specific evaluator notes..."></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="App.closeModals()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btnSaveStudentSubmit">Save Student</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: DELETE CONFIRMATION -->
+  <div class="modal-overlay" id="deleteConfirmModal">
+    <div class="modal-card" style="max-width: 450px;">
+      <div class="modal-header">
+        <h3 style="color:var(--danger);">Delete Student</h3>
+        <button class="btn btn-outline btn-sm btn-icon" onclick="App.closeModals()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom:1rem;">Are you sure you want to permanently delete this student and all their recorded marks?</p>
+        <div style="background:var(--slate-100); padding:0.85rem; border-radius:var(--radius-md); font-size:0.9rem;">
+          <strong id="deleteStudentName">—</strong><br>
+          <span style="color:var(--slate-500); font-size:0.8rem;" id="deleteStudentId">—</span>
+        </div>
+        <p style="color:var(--danger); font-size:0.8rem; margin-top:0.75rem;">This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="App.closeModals()">Cancel</button>
+        <button type="button" class="btn btn-danger" id="btnConfirmDeleteStudent">Delete Permanently</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: DOWNLOAD MARKS OPTIONS -->
+  <div class="modal-overlay" id="downloadModal">
+    <div class="modal-card" style="max-width: 520px;">
+      <div class="modal-header">
+        <h3>Download Student Marks Report</h3>
+        <button class="btn btn-outline btn-sm btn-icon" onclick="App.closeModals()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="background:var(--slate-50); border:1px solid var(--slate-200); padding:1rem; border-radius:var(--radius-lg); margin-bottom:1.25rem;">
+          <h4 id="downloadModalStudentName" style="font-size:1.1rem; margin-bottom:0.25rem;">—</h4>
+          <p id="downloadModalStudentDetails" style="font-size:0.85rem; color:var(--slate-500);">—</p>
+        </div>
+
+        <p style="font-size:0.875rem; color:var(--slate-700); margin-bottom:1rem;">
+          Select your desired format. Reports contain the complete criterion-by-criterion assessment (all 38 criteria), max marks, marks awarded, assessment status, evaluator comments, category subtotals, overall score, percentage, and evaluation band.
+        </p>
+
+        <div style="display:flex; flex-direction:column; gap:0.75rem;">
+          <div style="border:1px solid var(--slate-300); border-radius:var(--radius-md); padding:1rem; display:flex; align-items:center; justify-content:space-between; gap:1rem;">
+            <div>
+              <strong style="display:flex; align-items:center; gap:0.4rem; color:var(--slate-900);">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+                PDF Assessment Report
+              </strong>
+              <p style="font-size:0.775rem; color:var(--slate-500); margin-top:0.2rem;">Official printable report with institutional header, rubric band mapping, signatures, and formatted tables.</p>
+            </div>
+            <button class="btn btn-primary btn-sm" id="btnTriggerPdfDownload">
+              Print / Save PDF
+            </button>
+          </div>
+
+          <div style="border:1px solid var(--slate-300); border-radius:var(--radius-md); padding:1rem; display:flex; align-items:center; justify-content:space-between; gap:1rem;">
+            <div>
+              <strong style="display:flex; align-items:center; gap:0.4rem; color:var(--slate-900);">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="8" y1="6" x2="21" y2="6"></line>
+                  <line x1="8" y1="12" x2="21" y2="12"></line>
+                  <line x1="8" y1="18" x2="21" y2="18"></line>
+                  <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                  <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                  <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                </svg>
+                Individual CSV Spreadsheet
+              </strong>
+              <p style="font-size:0.775rem; color:var(--slate-500); margin-top:0.2rem;">Structured CSV spreadsheet with student metadata, category subtotals, and all 38 criteria.</p>
+            </div>
+            <button class="btn btn-white btn-sm" id="btnTriggerCsvDownload">
+              Download CSV
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="App.closeModals()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: BACKUP & RESTORE -->
+  <div class="modal-overlay" id="backupModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Backup & Restore Assessments</h3>
+        <button class="btn btn-outline btn-sm btn-icon" onclick="App.closeModals()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom:1.5rem; padding-bottom:1.5rem; border-bottom:1px solid var(--slate-200);">
+          <h4 style="font-size:1rem; margin-bottom:0.4rem; display:flex; align-items:center; gap:0.4rem;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+            </svg>
+            Export Complete Backup (JSON)
+          </h4>
+          <p style="font-size:0.825rem; color:var(--slate-600); margin-bottom:0.75rem;">
+            Download all current students, assessment marks, comments, and settings as a JSON file. Keep this file safe or use it to transfer data to another computer.
+          </p>
+          <button class="btn btn-primary btn-sm" onclick="App.exportBackupJSON()">
+            Download JSON Backup File
+          </button>
+        </div>
+
+        <div>
+          <h4 style="font-size:1rem; margin-bottom:0.4rem; display:flex; align-items:center; gap:0.4rem;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+            </svg>
+            Restore from JSON Backup
+          </h4>
+          <p style="font-size:0.825rem; color:var(--slate-600); margin-bottom:0.75rem;">
+            Upload an Intellex JSON backup file to restore student assessments.
+          </p>
+
+          <input type="file" id="restoreFileInput" accept=".json" style="margin-bottom:0.75rem; font-size:0.85rem;" onchange="App.handleFileSelect(event)">
+
+          <div id="restorePreviewBox" style="display:none; background:var(--slate-50); border:1px solid var(--slate-300); border-radius:var(--radius-md); padding:0.85rem; margin-bottom:0.75rem; font-size:0.825rem;">
+            <strong id="restorePreviewText">—</strong>
+            <div style="display:flex; gap:0.5rem; margin-top:0.75rem;">
+              <button class="btn btn-primary btn-sm" onclick="App.executeRestore('replace')">
+                Replace Current Data
+              </button>
+              <button class="btn btn-white btn-sm" onclick="App.executeRestore('merge')">
+                Merge with Existing Data
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="App.closeModals()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- APPLICATION JAVASCRIPT -->
+  <script>
+    /**
+     * INTELLEX STUDENT ASSESSMENT TOOL - CORE JAVASCRIPT
+     * Standalone Client-Side Application
+     */
+
+    // Master Criteria Specification (Exact 5 Categories, 38 Criteria, 495 Max Marks)
+    const CRITERIA_CATEGORIES = [{"id": "tech", "categoryNumber": 1, "name": "Category 1: Technical Capability", "shortName": "Technical Capability", "maxMarks": 95, "icon": "code", "criteria": [{"id": "c1_1", "name": "Project Execution", "maxMarks": 25, "monitor": "Ability to take requirements and deliver a functioning feature/project from start to finish; architecture planning, component modularity, state management, and edge-case handling.", "guidance": "• 22–25 (86–100%): Flawless end-to-end delivery; robust modular architecture, zero regressions, anticipates edge cases proactively.\n• 19–21 (76–85%): Delivers fully functioning project with minimal supervisor intervention; clean structure, minor polish needed.\n• 15–18 (61–75%): Meets standard acceptance criteria; core features work, requires occasional guidance on architectural structuring.\n• 10–14 (41–60%): Basic execution; partial feature delivery with some functional bugs or unhandled edge cases.\n• 5–9 (21–40%): Struggles to connect components or complete workflow without step-by-step guidance.\n• 0–4 (0–20%): Unable to deliver runnable project or fundamental features broken.", "fallback": "Assign a timed 2-hour mini-project: Build an end-to-end interactive data table with search, pagination, and persistent state from a mock API response."}, {"id": "c1_2", "name": "Code Quality", "maxMarks": 15, "monitor": "Adherence to clean code principles, DRY (Don't Repeat Yourself), single responsibility principle, naming conventions, linting/formatting rules, and semantic code organization.", "guidance": "• 13–15 (86–100%): Exemplary readability, modular functions, strict TypeScript/typing or standard lint compliance, comprehensive self-documenting code.\n• 11–12 (76–85%): High code standards, consistent indentation and naming, sensible modularity with very few redundant patterns.\n• 9–10 (61–75%): Acceptable code quality; readable and follows conventions, but minor instances of repetitive logic or overly large functions.\n• 6–8 (41–60%): Inconsistent naming, occasional duplicate code, functions doing too many things.\n• 3–5 (21–40%): Messy structure, poor formatting, heavily coupled code requiring significant refactoring.\n• 0–2 (0–20%): Spaghetti code, unreadable variable names, syntax/linting ignored completely.", "fallback": "Code review and refactoring assignment: Provide a 150-line messy spaghetti function; candidate must refactor it into clean, modular, typed subroutines with proper naming within 45 minutes."}, {"id": "c1_3", "name": "Technology Knowledge", "maxMarks": 15, "monitor": "Understanding of the chosen tech stack, framework lifecycle, core language nuances (e.g. JavaScript closures, async/await, DOM, CSS box model, React/Vue lifecycle hooks), and library APIs.", "guidance": "• 13–15 (86–100%): Deep foundational grasp; accurately explains underlying mechanics (event loop, rendering pipeline, memory management) and best practices.\n• 11–12 (76–85%): Strong working knowledge; effectively leverages ecosystem libraries and explains technical choices rationally.\n• 9–10 (61–75%): Competent usage of standard framework patterns, but relies on boilerplate for complex mechanisms.\n• 6–8 (41–60%): Surface-level familiarity; copies solutions without full comprehension of how the underlying APIs function.\n• 3–5 (21–40%): Weak foundational understanding; confused about async behavior, state flow, or fundamental syntax.\n• 0–2 (0–20%): Lacks basic comprehension of core language features and framework primitives.", "fallback": "Technical oral defense & concept questionnaire: 10 targeted concept questions covering async/await, closures, virtual DOM vs real DOM, CSS specificity, and browser rendering lifecycle."}, {"id": "c1_4", "name": "Git/GitHub", "maxMarks": 10, "monitor": "Version control hygiene, branch naming, atomic and descriptive commit messages, creating clean PRs, resolving merge conflicts, and maintaining clean git history.", "guidance": "• 9–10 (86–100%): Flawless Git habits; conventional commit messages, clean rebase/merge practices, detailed pull request descriptions with context.\n• 8 (76–85%): Consistent commits, clear branch workflow, handles conflicts independently with ease.\n• 6–7 (61–75%): Uses standard branch and commit workflow, commits are reasonably descriptive, occasional squash or conflict help needed.\n• 4–5 (41–60%): Large infrequent commits (\"fixes\", \"updates\"), occasional accidental commits to main branch.\n• 2–3 (21–40%): Needs constant supervision with branching, regularly loses work or mishandles merge conflicts.\n• 0–1 (0–20%): Unable to perform basic clone, branch, commit, push operations without failure.", "fallback": "Git simulation drill: Initialize repo, branch from feature, rebase onto updated main, resolve a deliberate merge conflict, and submit a formatted PR."}, {"id": "c1_5", "name": "Responsive UI", "maxMarks": 10, "monitor": "Fluid layout execution across mobile, tablet, and desktop breakpoints; flexible grids/flexbox, touch target accessibility, avoiding horizontal overflow, and typography scaling.", "guidance": "• 9–10 (86–100%): Pixel-perfect across all viewport widths (320px to 4K); zero layout shifts or overflow bugs; touch-first mobile UX.\n• 8 (76–85%): Well-adapted mobile and desktop experience; minor spacing adjustments needed on intermediate tablet sizes.\n• 6–7 (61–75%): Functional responsive design; works on standard mobile and desktop, but minor horizontal scroll or awkward line wrapping on small screens.\n• 4–5 (41–60%): Desktop-first mindset; mobile layouts appear squished, truncated, or break on small viewports.\n• 2–3 (21–40%): Severe layout breakage on mobile devices; overlapping text, unclickable elements.\n• 0–1 (0–20%): Non-responsive fixed-width design; unusable on mobile screens.", "fallback": "Responsive audit & repair: Take a broken fixed-width multi-column card layout and convert it to fluid responsive grid with mobile drawer navigation in 40 minutes."}, {"id": "c1_6", "name": "Debugging/Execution", "maxMarks": 10, "monitor": "Efficiency in finding and resolving runtime errors, console exceptions, UI rendering bugs, and logical glitches; effective use of devtools, breakpoints, and logs.", "guidance": "• 9–10 (86–100%): Swift, systematic debugging using browser DevTools, network tab, and source breakpoints; isolates root cause in minutes.\n• 8 (76–85%): Methodical troubleshooting; identifies bugs accurately with minimal trial and error.\n• 6–7 (61–75%): Capable of resolving typical bugs, but occasionally relies on haphazard console.logs instead of structured diagnosis.\n• 4–5 (41–60%): Takes excessive time to locate simple syntax or state errors; gets overwhelmed by stack traces.\n• 2–3 (21–40%): Unable to diagnose bugs independently; introduces secondary errors while attempting fixes.\n• 0–1 (0–20%): Paralyzed by errors; cannot read error traces or find bug origins.", "fallback": "Bug hunt test: Provide a project with 3 intentional bugs (async race condition, undefined state access, CSS z-index stacking context issue) to identify and fix within 30 minutes."}, {"id": "c1_7", "name": "Deployment", "maxMarks": 5, "monitor": "Building production assets, environment variable configuration, deploying to hosting platforms (Vercel, Netlify, GitHub Pages, Cloudflare), and verifying live builds.", "guidance": "• 5 (86–100%): Flawless zero-downtime deployment; configures build settings, env variables, custom domain/SSL, and tests production URL thoroughly.\n• 4 (76–85%): Successfully deploys project independently; resolves minor build warnings or base-path asset issues.\n• 3 (61–75%): Deploys with guidance on environment variables or routing fallbacks (e.g. SPA 404 rewrite).\n• 2 (41–60%): Requires assistance resolving build script failures or missing build output directories.\n• 1 (21–40%): Struggles with basic deployment concepts; exposes secrets or repeatedly fails build.\n• 0 (0–20%): Unable to produce a deployable production build.", "fallback": "Live deployment challenge: Configure and deploy a static SPA with routing to GitHub Pages or Vercel, ensuring asset paths and 404 redirects work correctly."}, {"id": "c1_8", "name": "Learning New Tech", "maxMarks": 5, "monitor": "Speed of picking up unfamiliar tools, libraries, or APIs; reading official documentation and applying new patterns without requiring extensive handholding.", "guidance": "• 5 (86–100%): Rapid assimilation; studies documentation, builds proof-of-concept, and adopts idiomatic patterns within hours.\n• 4 (76–85%): Learns quickly from documentation and tutorials with minimal clarification needed.\n• 3 (61–75%): Adopts new tools at an average pace, requiring occasional guidance on best practices.\n• 2 (41–60%): Slow to adapt; resists changing familiar patterns or struggles to interpret API docs.\n• 1 (21–40%): High resistance to new tools; requires line-by-line tutorials to implement unfamiliar APIs.\n• 0 (0–20%): Unable to learn or apply new technical tools independently.", "fallback": "Rapid API adoption test: Provide documentation for an unfamiliar third-party SDK/API; candidate must implement a basic integration in 45 minutes."}]}, {"id": "prob", "categoryNumber": 2, "name": "Category 2: Problem Solving", "shortName": "Problem Solving", "maxMarks": 100, "icon": "cpu", "criteria": [{"id": "c2_1", "name": "Debugging Root Cause", "maxMarks": 25, "monitor": "Ability to dig beyond superficial symptoms to find the true underlying architectural or logical defect; distinguishes cause from effect.", "guidance": "• 22–25 (86–100%): Pinpoints true root cause systematically; fixes core issue rather than applying band-aid patches.\n• 19–21 (76–85%): Investigates thoroughly; finds root cause with minimal prompting, prevents recurrence.\n• 15–18 (61–75%): Solves the problem, but initial attempt may address symptom before finding underlying cause.\n• 10–14 (41–60%): Tends to apply quick superficial fixes without investigating why the failure occurred.\n• 5–9 (21–40%): Repeatedly applies trial-and-error hacks without understanding why code broke.\n• 0–4 (0–20%): Fails to locate failure origin; completely misdiagnoses issues.", "fallback": "Root cause RCA exercise: Present a scenario where a memory leak or stale state occurs in a dashboard; require written analysis of root cause and preventive patch."}, {"id": "c2_2", "name": "Requirement Understanding", "maxMarks": 15, "monitor": "Accurately decomposing project specifications, user stories, and acceptance criteria; catching unstated assumptions before coding.", "guidance": "• 13–15 (86–100%): Grasps intricate requirements instantly; identifies ambiguities and edge conditions upfront before writing a single line.\n• 11–12 (76–85%): Thorough comprehension of requirements; delivers matching feature set with very few scope misalignments.\n• 9–10 (61–75%): Satisfactory understanding of core requirements; misses minor edge requirements that need subsequent alignment.\n• 6–8 (41–60%): Often misinterprets requirements; builds features that deviate from user specs.\n• 3–5 (21–40%): Consistently builds wrong functionality due to skipping or skimming specs.\n• 0–2 (0–20%): Completely disregards specifications; incapable of following requirements.", "fallback": "Spec breakdown exercise: Provide a 1-page client project brief; candidate must extract and write a structured list of functional requirements, non-functional requirements, and edge cases."}, {"id": "c2_3", "name": "Independent Problem Solving", "maxMarks": 20, "monitor": "Self-reliance when confronted with technical roadblocks; exhaustive exploration of solutions before escalating to senior engineers.", "guidance": "• 18–20 (86–100%): Highly autonomous; evaluates multiple approaches, implements optimal solution, and explains tradeoffs clearly.\n• 15–17 (76–85%): Solves complex problems independently; asks for help only when organizational blockers arise.\n• 12–14 (61–75%): Autonomous on routine tasks; seeks direction when facing novel or ambiguous challenges.\n• 8–11 (41–60%): Gives up quickly when code fails; relies on mentors to provide answers rather than thinking through steps.\n• 4–7 (21–40%): Highly dependent on senior staff for basic problem solving steps.\n• 0–3 (0–20%): Cannot make progress without constant step-by-step instruction.", "fallback": "Isolated coding kata: Complete an algorithmic/business logic feature (e.g. custom date-range grouping and filtering) without asking questions or external assistance within 60 minutes."}, {"id": "c2_4", "name": "Research & Investigation", "maxMarks": 10, "monitor": "Skill in finding authoritative documentation, GitHub issues, RFCs, and technical articles; cross-referencing information rather than copy-pasting outdated snippets.", "guidance": "• 9–10 (86–100%): Expert research ability; finds verified solutions in official specs/issues; filters out deprecated patterns.\n• 8 (76–85%): Solid research discipline; finds working solutions efficiently and validates their reliability.\n• 6–7 (61–75%): Capable of finding answers on Stack Overflow/LLMs, but occasionally incorporates obsolete or sub-optimal patterns.\n• 4–5 (41–60%): Surface-level searching; copies answers blindly without testing or understanding limitations.\n• 2–3 (21–40%): Struggles to formulate effective search queries; gets lost in irrelevant forum threads.\n• 0–1 (0–20%): Unable to conduct technical research independently.", "fallback": "Research brief: Research and write a 1-page comparison of two competing libraries for a specific requirement (e.g. charting libraries) comparing bundle size, license, and API ergonomics."}, {"id": "c2_5", "name": "Solution Quality", "maxMarks": 15, "monitor": "Elegance, performance, maintainability, and scalability of implemented solutions; avoids brittle workarounds.", "guidance": "• 13–15 (86–100%): Robust, production-grade solutions; optimized time/space complexity, modular, extensible, and well-tested.\n• 11–12 (76–85%): High-quality solutions; stable under normal and heavy loads with clean structure.\n• 9–10 (61–75%): Workable solutions; functions correctly but has minor performance bottlenecks or slightly rigid design.\n• 6–8 (41–60%): Brittle solutions; prone to breaking when unexpected data is passed.\n• 3–5 (21–40%): Poor quality; hacks and shortcuts that compromise overall application stability.\n• 0–2 (0–20%): Defective or non-functional solutions.", "fallback": "Code critique & optimization: Review a provided functional but inefficient solution (O(n²) lookups, excessive re-renders) and deliver an optimized production-grade version."}, {"id": "c2_6", "name": "Handling Unexpected Problems", "maxMarks": 10, "monitor": "Emotional composure, adaptability, and logical reasoning when specs change abruptly, dependencies fail, or unforeseen errors emerge.", "guidance": "• 9–10 (86–100%): Stays calm, analytical, and pivots gracefully; formulates contingency plans immediately without panic.\n• 8 (76–85%): Adapts smoothly to sudden changes; recalibrates priorities with minimal friction.\n• 6–7 (61–75%): Manages unexpected hurdles reasonably, but shows brief hesitation or mild frustration before adjusting.\n• 4–5 (41–60%): Becomes visibly stressed or defensive when plans change; struggles to replan.\n• 2–3 (21–40%): Paralyzed by unexpected blockers; refuses to pivot without extensive reassurance.\n• 0–1 (0–20%): Complete breakdown of productivity upon encountering unexpected problems.", "fallback": "Curveball scenario test: Midway through a mock feature build, introduce a major breaking requirement change (e.g. data format inverted); assess reaction, replanning, and execution."}, {"id": "c2_7", "name": "Learning From Mistakes", "maxMarks": 5, "monitor": "Incorporating feedback from past failures; ensuring the same bug or anti-pattern is never repeated in subsequent tasks.", "guidance": "• 5 (86–100%): Never repeats a mistake; maintains personal notes or checklists and applies corrective measures across all subsequent work.\n• 4 (76–85%): Learns quickly from mistakes; readily accepts accountability and prevents repetition.\n• 3 (61–75%): Usually avoids repeat errors, though occasional oversight occurs under tight deadlines.\n• 2 (41–60%): Repeatedly makes the same mistake 2–3 times despite prior correction.\n• 1 (21–40%): Chronically repeats the same errors; ignores historical corrections.\n• 0 (0–20%): Hostile to admitting errors; zero learning demonstrated.", "fallback": "Post-incident review: Have the student document what went wrong in a recent coding bug, why it occurred, and demonstrate a test case to prevent regression."}]}, {"id": "collab", "categoryNumber": 3, "name": "Category 3: Professional Collaboration", "shortName": "Professional Collaboration", "maxMarks": 100, "icon": "users", "criteria": [{"id": "c3_1", "name": "Teamwork", "maxMarks": 20, "monitor": "Active participation in group goals, supportive attitude, putting team delivery ahead of individual ego, collaborative problem solving.", "guidance": "• 18–20 (86–100%): Exceptional team player; uplifts peers, fosters psychological safety, unblocks teammates spontaneously.\n• 15–17 (76–85%): Strong collaborator; contributes actively to team discussions, reliably steps in to support others.\n• 12–14 (61–75%): Good team citizen; works well with others, fulfills team commitments without friction.\n• 8–11 (41–60%): Works mostly in an isolated silo; reluctant to engage in team discussions or share progress.\n• 4–7 (21–40%): Disruptive or uncooperative team behavior; creates friction with peers.\n• 0–3 (0–20%): Actively hostile or toxic to team dynamics.", "fallback": "Peer pairing simulation: 45-minute collaborative pair-programming session with an evaluator acting as peer, observing collaboration and communication balance."}, {"id": "c3_2", "name": "Git/Team Workflow", "maxMarks": 15, "monitor": "Compliance with branch protection, PR review protocols, semantic tagging, squash-merge rules, and avoiding blocking teammates with unreviewed code.", "guidance": "• 13–15 (86–100%): Model team Git workflow; small reviewable PRs, prompt peer reviews, respects release branches and staging flows.\n• 11–12 (76–85%): Follows team Git guidelines diligently; communicates before merging shared branches.\n• 9–10 (61–75%): Standard workflow compliance; occasionally forgets to pull before pushing or creates slightly oversized PRs.\n• 6–8 (41–60%): Skips PR templates, merges without proper approvals, or pushes broken code to development branch.\n• 3–5 (21–40%): Regularly breaks team builds, overrides branch protections, or bypasses code review.\n• 0–2 (0–20%): Complete disregard for shared team version control etiquette.", "fallback": "Mock PR review exercise: Conduct a code review on a teammate's pull request, providing at least 3 constructive, polite, and actionable comments."}, {"id": "c3_3", "name": "Responsibility", "maxMarks": 15, "monitor": "Taking ownership of assigned tasks, honoring commitments, proactively flagging roadblocks early, and following tasks to full completion.", "guidance": "• 13–15 (86–100%): Absolute accountability; delivers on promises, flags obstacles proactively, never leaves loose ends.\n• 11–12 (76–85%): Highly reliable; takes ownership of duties, follows up diligently.\n• 9–10 (61–75%): Responsible for assigned work; occasionally needs a reminder on secondary deliverables.\n• 6–8 (41–60%): Inconsistent follow-through; sometimes drops tasks when difficulty increases.\n• 3–5 (21–40%): Defers blame to others; frequently fails to complete assigned responsibilities.\n• 0–2 (0–20%): Total absence of accountability.", "fallback": "Accountability simulation: Candidate is given ownership of a deliverable with ambiguous dependencies; evaluate how they map, schedule, and report status."}, {"id": "c3_4", "name": "Working With Designers", "maxMarks": 10, "monitor": "Respect for design systems, Figma specs, typography, spacing tokens, visual fidelity, and constructive dialogue regarding technical feasibility.", "guidance": "• 9–10 (86–100%): Impeccable design fidelity; interprets Figma specs precisely (padding, typography, colors), proposes elegant technical solutions for complex UI.\n• 8 (76–85%): Strong attention to design detail; clarifies ambiguities with designer professionally.\n• 6–7 (61–75%): Implements designs well; occasional slight discrepancies in margins, fonts, or hover states.\n• 4–5 (41–60%): 'Eyeballs' designs carelessly; ignores design system tokens, producing inconsistent visuals.\n• 2–3 (21–40%): Disregards design mockups; delivers UI that deviates significantly from approved designs.\n• 0–1 (0–20%): Dismissive of designers and design specifications.", "fallback": "Figma-to-code implementation audit: Match a provided Figma frame into HTML/CSS; evaluate accuracy of font sizes, padding, hex colors, and spacing."}, {"id": "c3_5", "name": "Working With Developers", "maxMarks": 10, "monitor": "API contract negotiation, code review interactions, shared utility development, and mutual respect among backend/frontend/peer developers.", "guidance": "• 9–10 (86–100%): Collaborative technical partner; coordinates API schemas, writes reusable shared modules, offers supportive code reviews.\n• 8 (76–85%): Integrates smoothly with peer developers; communicates interfaces and payloads clearly.\n• 6–7 (61–75%): Works well with fellow devs, minor friction when API contracts differ from expectations.\n• 4–5 (41–60%): Struggles to coordinate data contracts; blames other developers for integration friction.\n• 2–3 (21–40%): Combative in code reviews or refuses to adopt shared architecture decisions.\n• 0–1 (0–20%): Unable to cooperate with other engineers.", "fallback": "API contract alignment exercise: Write a JSON schema / TypeScript interface contract for a feature and negotiate payload endpoints with an evaluator playing backend engineer."}, {"id": "c3_6", "name": "Receiving Feedback", "maxMarks": 10, "monitor": "Openness to criticism, avoiding defensiveness, actively seeking clarifying feedback, and prompt implementation of suggested changes.", "guidance": "• 9–10 (86–100%): Welcomes constructive critique enthusiastically; treats feedback as a growth opportunity, implements improvements immediately.\n• 8 (76–85%): Accepts feedback professionally; implements changes without resentment or pushback.\n• 6–7 (61–75%): Listens to feedback, may initially justify old code, but ultimately carries out requested adjustments.\n• 4–5 (41–60%): Defensive when critiqued; takes technical comments personally, reluctant to change code.\n• 2–3 (21–40%): Argumentative and resistant during code reviews; ignores reviewer requests.\n• 0–1 (0–20%): Rejects feedback outright or reacts with hostility.", "fallback": "Live code review feedback test: Provide 3 critical critiques on their code; observe verbal and behavioral response and watch them apply the requested changes."}, {"id": "c3_7", "name": "Helping Team Members", "maxMarks": 10, "monitor": "Willingness to mentor peers, answer questions in team channels, assist blocked colleagues, and contribute to shared documentation.", "guidance": "• 9–10 (86–100%): Proactively mentors and unblocks colleagues; writes shared wikis/guides that benefit the entire team.\n• 8 (76–85%): Readily offers help when asked; patient and clear when explaining concepts to peers.\n• 6–7 (61–75%): Helps teammates when requested, provided personal workload permits.\n• 4–5 (41–60%): Rarely helps others; views assisting peers as an unwelcome distraction.\n• 2–3 (21–40%): Hoards knowledge; impatient or condescending when teammates seek assistance.\n• 0–1 (0–20%): Completely unwilling to support or assist teammates.", "fallback": "Knowledge sharing exercise: Write a concise 1-page onboarding troubleshooting guide for common local environment setup errors."}, {"id": "c3_8", "name": "Conflict Handling", "maxMarks": 10, "monitor": "Navigating disagreements professionally, de-escalating tension, focusing on evidence and user outcomes rather than personal opinions.", "guidance": "• 9–10 (86–100%): Masterful de-escalation; finds consensus through data, user needs, and objective evaluation of tradeoffs.\n• 8 (76–85%): Handles disagreements calmly and constructively; separates personal feelings from technical decisions.\n• 6–7 (61–75%): Manages routine differences maturely; occasionally needs a senior lead to mediate deadlocks.\n• 4–5 (41–60%): Becomes passive-aggressive or stubborn during disagreements; holds grudges.\n• 2–3 (21–40%): Escalates minor differences into interpersonal conflicts.\n• 0–1 (0–20%): Highly combative, creating a toxic team atmosphere during disagreements.", "fallback": "Conflict resolution scenario: Present a simulated disagreement over library selection (e.g. Tailwind vs CSS Modules); candidate must write a balanced tradeoff analysis and consensus proposal."}]}, {"id": "comm", "categoryNumber": 4, "name": "Category 4: Communication & Client Readiness", "shortName": "Communication & Client Readiness", "maxMarks": 100, "icon": "message", "criteria": [{"id": "c4_1", "name": "Requirement Clarification", "maxMarks": 20, "monitor": "Asking precise, thoughtful questions early; uncovering edge cases and business rules before committing to assumptions.", "guidance": "• 18–20 (86–100%): Asks laser-focused questions that eliminate ambiguity; uncovers hidden client needs and documents clarifications.\n• 15–17 (76–85%): Clarifies requirements effectively before starting; asks thoughtful questions in structured batches.\n• 12–14 (61–75%): Asks reasonable clarification questions, but occasionally forgets a secondary business edge case.\n• 8–11 (41–60%): Rarely asks questions; makes assumptions that turn out to be incorrect during final demo.\n• 4–7 (21–40%): Asks disorganized, repetitive questions without reviewing previous answers or documentation.\n• 0–3 (0–20%): Blindly starts work with zero clarification, leading to total project misalignment.", "fallback": "Ambiguous brief interview: Provide an intentionally vague user story; candidate must conduct a 10-minute clarification interview with the evaluator acting as client."}, {"id": "c4_2", "name": "Client Communication", "maxMarks": 20, "monitor": "Professional, empathetic, polished interaction with external or internal stakeholders; adapting tone and avoiding tech jargon when speaking to non-technical users.", "guidance": "• 18–20 (86–100%): Polished, articulate client communication; builds trust, explains status clearly, manages expectations flawlessly.\n• 15–17 (76–85%): Professional and courteous; conveys progress and delays respectfully and clearly.\n• 12–14 (61–75%): Good communication; generally clear, though occasionally slips into overly technical jargon with non-technical clients.\n• 8–11 (41–60%): Lacks polish; communication is blunt, informal, or fails to address client concerns directly.\n• 4–7 (21–40%): Poor client etiquette; argumentative, defensive, or unprofessional tone in emails/calls.\n• 0–3 (0–20%): Damaging to client relationships; inappropriate or unprofessional conduct.", "fallback": "Client email simulation: Draft an email to a non-technical client explaining why a feature release is delayed by 2 days due to a third-party security patch, maintaining positive rapport."}, {"id": "c4_3", "name": "Professional Messaging", "maxMarks": 15, "monitor": "Written communications across Slack, email, and tickets; concise, well-structured messages with appropriate context, bullet points, and actionable next steps.", "guidance": "• 13–15 (86–100%): Crystal-clear, executive-level written messages; structured formatting, actionable requests, perfect grammar and tone.\n• 11–12 (76–85%): Well-written, professional messages; organized with clear calls to action.\n• 9–10 (61–75%): Adequate written clarity; gets message across, though sometimes verbose or missing immediate context.\n• 6–8 (41–60%): Sloppy messages; poor grammar, fragmented thoughts, vague statements like 'it is not working'.\n• 3–5 (21–40%): Incoherent or overly casual messages ('idk', 'plz fix'); confusing to recipients.\n• 0–2 (0–20%): Unprofessional, illegible, or disrespectful messaging.", "fallback": "Slack announcement draft: Write a concise Slack update to the company announcements channel regarding a scheduled database migration window."}, {"id": "c4_4", "name": "Technical Explanation", "maxMarks": 15, "monitor": "Ability to explain complex architectural or code concepts simply to both engineers and non-technical stakeholders using analogies and diagrams.", "guidance": "• 13–15 (86–100%): Master communicator; explains complex technical tradeoffs with clear mental models, diagrams, and business-value mapping.\n• 11–12 (76–85%): Explains technical concepts clearly; tailors depth to the listener's background.\n• 9–10 (61–75%): Sound technical explanation, but struggles slightly when translating deep tech concepts into layman terms.\n• 6–8 (41–60%): Relies heavily on buzzwords and convoluted explanations; confuses listeners.\n• 3–5 (21–40%): Unable to articulate why an architecture decision was made or how code operates.\n• 0–2 (0–20%): Completely unable to explain their own technical work.", "fallback": "Whiteboard explanation test: Spend 5 minutes explaining how JWT authentication works to a non-technical product manager."}, {"id": "c4_5", "name": "Project Updates", "maxMarks": 10, "monitor": "Timely, proactive status reporting; highlighting completed milestones, blockers, and ETA changes without needing to be chased.", "guidance": "• 9–10 (86–100%): Exemplary proactive updates; posts daily standup summaries, flags blockers hours before they become critical, updates tickets in real-time.\n• 8 (76–85%): Reliable updates; keeps team informed of progress and milestones consistently.\n• 6–7 (61–75%): Provides updates when asked or during standard standups; occasionally forgets to post async updates.\n• 4–5 (41–60%): Must be prompted repeatedly for status; team is left guessing about progress.\n• 2–3 (21–40%): Goes silent for days; conceals blockers until deadline day.\n• 0–1 (0–20%): Zero communication regarding project status.", "fallback": "Standup summary exercise: Write a formatted daily standup post (Yesterday / Today / Blockers / ETA) for a multi-day sprint."}, {"id": "c4_6", "name": "Presentation/Demo", "maxMarks": 10, "monitor": "Structuring a live walkthrough of working software; setting context, guiding audience through user journeys, and highlighting value delivered.", "guidance": "• 9–10 (86–100%): Compelling, engaging presentation; smooth demo flow, connects features to business value, well-rehearsed.\n• 8 (76–85%): Clear, confident demonstration of completed work; logical progression through features.\n• 6–7 (61–75%): Functional demo; shows features working, but presentation feels slightly rushed or technical.\n• 4–5 (41–60%): Disorganized demo; gets lost in code editor instead of demonstrating live application flow.\n• 2–3 (21–40%): Unprepared demo; application crashes immediately, lacks context or narrative.\n• 0–1 (0–20%): Refuses or fails completely to demonstrate work.", "fallback": "5-minute live feature demo: Present the working web application to evaluators as if they were prospective clients."}, {"id": "c4_7", "name": "Handling Questions", "maxMarks": 10, "monitor": "Poise, active listening, honesty when an answer is unknown ('I will verify and follow up'), and concise factual answers during Q&A.", "guidance": "• 9–10 (86–100%): Listens attentively, answers directly with poise; gracefully handles tough questions and commits to precise follow-ups.\n• 8 (76–85%): Responds confidently and accurately; addresses questions thoroughly.\n• 6–7 (61–75%): Answers adequately, though occasionally wanders off-topic before getting to the point.\n• 4–5 (41–60%): Becomes defensive when questioned; gives evasive or vague answers.\n• 2–3 (21–40%): Guesses or fabricates facts instead of admitting uncertainty; visibly flustered.\n• 0–1 (0–20%): Hostile or unable to respond to basic questions about their work.", "fallback": "Cross-examination Q&A drill: Evaluator asks 3 challenging questions about edge cases, scalability limits, and security of their project."}]}, {"id": "rel", "categoryNumber": 5, "name": "Category 5: Professional Reliability", "shortName": "Professional Reliability", "maxMarks": 100, "icon": "shield", "criteria": [{"id": "c5_1", "name": "Deadline Performance", "maxMarks": 25, "monitor": "Delivering milestones on or before target dates; realistic estimation and prompt early warnings if deadlines are at risk.", "guidance": "• 22–25 (86–100%): Consistently beats or meets deadlines; accurate estimation; zero last-minute surprises.\n• 19–21 (76–85%): Reliably delivers on time; gives ample notice (24h+) if an unexpected blocker threatens a target.\n• 15–18 (61–75%): Meets most deadlines; occasional minor delays on complex features, but manages overall schedule.\n• 10–14 (41–60%): Frequently misses deadlines by 1–2 days due to poor time management or late starts.\n• 5–9 (21–40%): Chronic missed deadlines; delivers late work with significant deficits.\n• 0–4 (0–20%): Complete disregard for project deadlines and delivery schedules.", "fallback": "Sprint estimation drill: Break down a 3-feature module into hour-by-hour estimates, set a strict 4-hour delivery deadline, and track variance."}, {"id": "c5_2", "name": "Responsiveness", "maxMarks": 15, "monitor": "Replying to urgent messages, emails, pull request comments, and meeting requests within reasonable business hours (e.g. under 30–60 minutes during work hours).", "guidance": "• 13–15 (86–100%): Highly responsive; acknowledges messages promptly, sets clear expectations if busy ('In deep work until 2pm, will review then').\n• 11–12 (76–85%): Consistently replies within normal working timeframes; dependable.\n• 9–10 (61–75%): Generally responsive; occasionally takes several hours to acknowledge non-urgent requests.\n• 6–8 (41–60%): Slow to respond; often requires second ping or reminder on direct messages.\n• 3–5 (21–40%): Unresponsive for extended stretches during work hours without explanation.\n• 0–2 (0–20%): Completely unresponsive; unreachable when needed.", "fallback": "Availability and ping audit: Review logged response times to asynchronous team pings over the evaluation cycle."}, {"id": "c5_3", "name": "Consistent Updates", "maxMarks": 15, "monitor": "Regular, steady rhythm of commits, notes, and task progress; avoids 'black hole' periods where no activity is visible.", "guidance": "• 13–15 (86–100%): Continuous visibility; commits daily, moves Kanban cards in real-time, steady predictable velocity.\n• 11–12 (76–85%): Regular updates; maintains steady progress without long periods of silence.\n• 9–10 (61–75%): Updates regularly on standard days, but velocity fluctuates occasionally.\n• 6–8 (41–60%): Spurt-and-stall work pattern; 3 days of silence followed by midnight rush.\n• 3–5 (21–40%): Disappears for days at a time with zero logged activity or commits.\n• 0–2 (0–20%): Completely erratic; no predictable work rhythm.", "fallback": "3-day work cadence challenge: Monitor commit timestamps and ticket state transitions across 3 consecutive working days."}, {"id": "c5_4", "name": "Ownership & Follow-through", "maxMarks": 15, "monitor": "Seeing things through to the very end; verifying features work in production, testing with real data, not leaving tasks at 90% done.", "guidance": "• 13–15 (86–100%): Tenacious follow-through; tests in production, monitors errors after deploy, verifies with end user that issue is truly resolved.\n• 11–12 (76–85%): Strong ownership; ensures tasks are fully tested and deployed before closing tickets.\n• 9–10 (61–75%): Good follow-through; occasionally forgets to close tickets or verify secondary edge cases after deploy.\n• 6–8 (41–60%): Leaves tasks half-finished; marks tickets 'done' when code is only tested locally.\n• 3–5 (21–40%): Abandons tasks as soon as difficult bugs arise; requires constant handholding to finish.\n• 0–2 (0–20%): Zero follow-through; starts many tasks, finishes none.", "fallback": "Verification checklist test: Provide a 'completed' feature; candidate must perform production verification, cross-browser sanity check, and write closure confirmation."}, {"id": "c5_5", "name": "Process Compliance", "maxMarks": 10, "monitor": "Following established engineering standards, branching policies, ticket transitions, documentation rules, and company workflows.", "guidance": "• 9–10 (86–100%): Flawless process adherence; models standard procedures, suggests process optimizations through proper channels.\n• 8 (76–85%): Respects all company and engineering processes consistently.\n• 6–7 (61–75%): Follows major processes; occasionally skips minor documentation or ticket tagging steps.\n• 4–5 (41–60%): Cuts corners regularly; bypasses approval gates, forgets ticket tracking.\n• 2–3 (21–40%): Resistant to process guidelines; frequently violates team protocols.\n• 0–1 (0–20%): Total disregard for organizational and engineering workflows.", "fallback": "Process compliance audit: Review a completed sprint's tickets, branch names, PR templates, and release notes against the team standard checklist."}, {"id": "c5_6", "name": "QC/Correction Discipline", "maxMarks": 10, "monitor": "Self-testing, attention to quality control, thoroughness before submitting for review, avoiding careless typos or syntax errors.", "guidance": "• 9–10 (86–100%): Rigorous self-QA; tests happy and unhappy paths, cross-browser checks, zero careless errors reach review.\n• 8 (76–85%): Diligent testing; catches most defects prior to pull request submission.\n• 6–7 (61–75%): Performs basic testing; occasional obvious UI glitch or console error slips through.\n• 4–5 (41–60%): Treats reviewers as their personal QA; submits untested code with obvious breakages.\n• 2–3 (21–40%): Submits broken builds repeatedly without testing at all.\n• 0–1 (0–20%): Complete absence of quality control.", "fallback": "Pre-PR self-inspection challenge: Candidate must run through a comprehensive 10-point QA checklist on their own work and document test evidence."}, {"id": "c5_7", "name": "Commitment & Attendance", "maxMarks": 5, "monitor": "Punctuality for standups, meetings, client syncs, honoring work hours, and communicating planned absences well in advance.", "guidance": "• 5 (86–100%): Punctual, dependable attendance; 100% meeting presence, communicates PTO weeks in advance.\n• 4 (76–85%): Reliable attendance; rarely late, communicates schedule changes promptly.\n• 3 (61–75%): Generally punctual; occasional minor tardiness with reasonable excuse.\n• 2 (41–60%): Frequent unexplained tardiness to morning standups and syncs.\n• 1 (21–40%): Chronic absenteeism; misses important team and client meetings without warning.\n• 0 (0–20%): Unacceptable attendance; completely unreliable.", "fallback": "Attendance and punctuality audit over the assessment sprint period."}, {"id": "c5_8", "name": "Professional Behavior", "maxMarks": 5, "monitor": "Maturity, respectful conduct towards colleagues and clients, integrity, handling pressure gracefully, adhering to workplace code of conduct.", "guidance": "• 5 (86–100%): Exemplary professionalism, integrity, and emotional intelligence in all workplace interactions.\n• 4 (76–85%): Courteous, respectful, and mature at all times.\n• 3 (61–75%): Demonstrates standard acceptable workplace demeanor.\n• 2 (41–60%): Immature behavior, occasional inappropriate comments or emotional outbursts under pressure.\n• 1 (21–40%): Unprofessional, disrespectful conduct causing discomfort among peers.\n• 0 (0–20%): Egregious violation of professional workplace standards.", "fallback": "Professional conduct review and 360-degree peer feedback assessment."}]}];
+
+    // Scoring Bands
+    const SCORING_LEVELS = [
+      { min: 86, max: 100, label: "Exceptional/Lead", class: "band-exceptional" },
+      { min: 76, max: 85, label: "Strong Independent", class: "band-strong-independent" },
+      { min: 61, max: 75, label: "Autonomous Standard", class: "band-autonomous" },
+      { min: 41, max: 60, label: "Basic Ability", class: "band-basic-ability" },
+      { min: 21, max: 40, label: "Heavy Guidance", class: "band-heavy-guidance" },
+      { min: 0, max: 20, label: "Unsatisfactory", class: "band-unsatisfactory" }
+    ];
+
+    function getEvaluationBand(pct) {
+      if (pct === null || pct === undefined || isNaN(pct)) {
+        return { label: "NOT ASSESSED", class: "band-unassessed" };
+      }
+      const p = Math.round(pct);
+      if (p >= 86) return { min: 86, max: 100, label: "Exceptional/Lead", class: "band-exceptional" };
+      if (p >= 76) return { min: 76, max: 85, label: "Strong Independent", class: "band-strong-independent" };
+      if (p >= 61) return { min: 61, max: 75, label: "Autonomous Standard", class: "band-autonomous" };
+      if (p >= 41) return { min: 41, max: 60, label: "Basic Ability", class: "band-basic-ability" };
+      if (p >= 21) return { min: 21, max: 40, label: "Heavy Guidance", class: "band-heavy-guidance" };
+      return { min: 0, max: 20, label: "Unsatisfactory", class: "band-unsatisfactory" };
+    }
+
+    const STORAGE_KEY = "intellex_assessment_data_v1";
+
+    // Application State
+    const App = {
+      students: [],
+      activeView: "dashboard",
+      activeStudentId: null,
+      activeCategoryIndex: 0,
+      restoreDataCandidate: null,
+
+      init() {
+        this.loadStudents();
+        this.setupEventListeners();
+        this.renderStats();
+        this.renderStudentsList();
+        
+        // Handle URL hash routing if present
+        window.addEventListener("hashchange", () => this.handleRoute());
+        this.handleRoute();
+      },
+
+      handleRoute() {
+        const hash = window.location.hash;
+        if (hash.startsWith("#assess/")) {
+          const studentId = hash.replace("#assess/", "");
+          if (this.students.some(s => s.id === studentId)) {
+            this.openAssessment(studentId, false);
+            return;
+          }
+        }
+        this.navigateTo("dashboard", false);
+      },
+
+      loadStudents() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) {
+            this.students = JSON.parse(raw);
+          } else {
+            // Load pre-populated sample students
+            this.students = [{"id": "stu_sample_1", "studentId": "ITX-2026-081", "name": "Aarav Patel", "email": "aarav.patel@intellex.edu", "track": "Full Stack Web Engineering", "batch": "Cohort 2026-A", "evaluator": "Dr. Marcus Vance", "evaluatorTitle": "Lead Engineering Evaluator", "assessmentDate": "2026-11-18", "notes": "Demonstrates outstanding system execution, strong autonomous problem solving, and exemplary professional communication.", "createdAt": "2026-11-10T09:00:00Z", "updatedAt": "2026-11-18T16:45:00Z", "marks": {"c1_1": 22, "c1_2": 13, "c1_3": 13, "c1_4": 9, "c1_5": 9, "c1_6": 9, "c1_7": 4, "c1_8": 4, "c2_1": 22, "c2_2": 13, "c2_3": 17, "c2_4": 9, "c2_5": 13, "c2_6": 8, "c2_7": 4, "c3_1": 18, "c3_2": 13, "c3_3": 14, "c3_4": 8, "c3_5": 9, "c3_6": 9, "c3_7": 8, "c3_8": 8, "c4_1": 17, "c4_2": 17, "c4_3": 13, "c4_4": 13, "c4_5": 9, "c4_6": 8, "c4_7": 8, "c5_1": 22, "c5_2": 13, "c5_3": 13, "c5_4": 13, "c5_5": 9, "c5_6": 9, "c5_7": 5, "c5_8": 5}, "comments": {"c1_1": "Engineered clean Next.js SPA with stateful cache and modular routing. Handled edge cases seamlessly.", "c1_2": "Followed strict ESLint/Prettier standards and DRY conventions throughout all pull requests.", "c1_3": "Solid conceptual understanding of JavaScript event loop, closures, and React reconciliation.", "c1_4": "Clean commit history using conventional commits; branch protection respected.", "c1_5": "Fluid mobile layout across 320px to 4K displays with accessible touch targets.", "c1_6": "Used Chrome DevTools memory profiling effectively to eliminate a render bottleneck.", "c1_7": "Configured Vercel deployment with environment variables and custom rewrites.", "c1_8": "Quickly assimilated Tailwind CSS v4 and Zustand state management within 48 hours.", "c2_1": "Identified memory leak caused by un-cleared interval in custom hook; patched root cause cleanly.", "c2_2": "Extracted implicit edge conditions from vague product spec prior to coding.", "c2_3": "Solved complex algorithmic filtering requirement autonomously without needing mentor assistance.", "c2_4": "Investigated official GitHub issues to resolve third-party package hydration conflict.", "c2_5": "Modular, performant components with O(n) lookup complexity.", "c2_6": "Pivoted calmly when client revised the authentication schema mid-sprint.", "c2_7": "Documented regression test case to prevent repeat of earlier CSS specificity bug.", "c3_1": "Proactively unblocked teammates during daily standups; fostered high team morale.", "c3_2": "Authored descriptive PR descriptions with screenshots and test procedures.", "c3_3": "Took full ownership of the analytics integration and saw it through deployment.", "c3_4": "Faithfully implemented Figma spacing tokens, typography, and interactive hover states.", "c3_5": "Collaborated smoothly with backend developer on OpenAPI specification contracts.", "c3_6": "Received code review feedback maturely and made suggested refactors promptly.", "c3_7": "Volunteered 1 hour to pair-program with a junior trainee on async data fetching.", "c3_8": "De-escalated a debate over state management by building an objective benchmark comparison.", "c4_1": "Prepared structured list of clarification questions before sprint kickoff.", "c4_2": "Communicated progress to stakeholders with polite, jargon-free explanations.", "c4_3": "Written Slack and email messages are concise, well-structured, and actionable.", "c4_4": "Explained client-side caching mechanism clearly to non-technical stakeholders.", "c4_5": "Daily async standup updates posted punctually every morning without prompting.", "c4_6": "Delivered engaging 5-minute live demo highlighting real end-user value.", "c4_7": "Handled difficult architecture questions calmly and accurately during sprint review.", "c5_1": "Delivered all sprint deliverables 4 hours ahead of deadline.", "c5_2": "Responded to high-priority PR comments within 20 minutes during work hours.", "c5_3": "Steady commit cadence throughout each working day; zero dark periods.", "c5_4": "Verified feature in production environment and confirmed bug fix with end user.", "c5_5": "Strictly adhered to code review, ticket progression, and branch naming standards.", "c5_6": "Ran full automated test suite and manual accessibility audit prior to review submission.", "c5_7": "100% on-time attendance for all standups and planning sessions.", "c5_8": "Maintained high emotional intelligence, courtesy, and professional demeanor."}}, {"id": "stu_sample_2", "studentId": "ITX-2026-094", "name": "Fatima Zahra", "email": "fatima.zahra@intellex.edu", "track": "Frontend Engineering", "batch": "Cohort 2026-A", "evaluator": "Sarah Jenkins", "evaluatorTitle": "Staff UI/UX Architect", "assessmentDate": "2026-11-19", "notes": "Assessment partially complete. Demonstrates high visual fidelity and CSS capability. Category 4 and 5 evaluations in progress.", "createdAt": "2026-11-12T11:00:00Z", "updatedAt": "2026-11-19T10:15:00Z", "marks": {"c1_1": 20, "c1_2": 12, "c1_3": 11, "c1_4": 8, "c1_5": 10, "c1_6": 8, "c1_7": 4, "c1_8": 4, "c2_1": 19, "c2_2": 12, "c2_3": 15, "c2_4": 8, "c2_5": 12, "c2_6": 7, "c2_7": 4, "c3_1": 16, "c3_2": 11, "c3_3": 12, "c3_4": 9}, "comments": {"c1_1": "Strong UI implementation; component hierarchy is logical and easy to maintain.", "c1_5": "Pixel-perfect fidelity across responsive viewports. Exceptional CSS grid craftsmanship.", "c2_1": "Diagnosed tricky layout shifting bug by tracking layout thrashing in performance tab.", "c3_4": "Works exceptionally well with design team; catches micro-interactions specified in Figma."}}, {"id": "stu_sample_3", "studentId": "ITX-2026-112", "name": "Vikram Malhotra", "email": "vikram.malhotra@intellex.edu", "track": "DevOps & Cloud Systems", "batch": "Cohort 2026-B", "evaluator": "David Chen", "evaluatorTitle": "Principal Infrastructure Engineer", "assessmentDate": "2026-11-20", "notes": "New candidate enrolled in DevOps track. Initial baseline assessment pending evaluation.", "createdAt": "2026-11-19T14:00:00Z", "updatedAt": "2026-11-19T14:00:00Z", "marks": {}, "comments": {}}];
+            this.saveStudents();
+          }
+        } catch (e) {
+          console.error("Error loading localStorage data:", e);
+          this.students = [{"id": "stu_sample_1", "studentId": "ITX-2026-081", "name": "Aarav Patel", "email": "aarav.patel@intellex.edu", "track": "Full Stack Web Engineering", "batch": "Cohort 2026-A", "evaluator": "Dr. Marcus Vance", "evaluatorTitle": "Lead Engineering Evaluator", "assessmentDate": "2026-11-18", "notes": "Demonstrates outstanding system execution, strong autonomous problem solving, and exemplary professional communication.", "createdAt": "2026-11-10T09:00:00Z", "updatedAt": "2026-11-18T16:45:00Z", "marks": {"c1_1": 22, "c1_2": 13, "c1_3": 13, "c1_4": 9, "c1_5": 9, "c1_6": 9, "c1_7": 4, "c1_8": 4, "c2_1": 22, "c2_2": 13, "c2_3": 17, "c2_4": 9, "c2_5": 13, "c2_6": 8, "c2_7": 4, "c3_1": 18, "c3_2": 13, "c3_3": 14, "c3_4": 8, "c3_5": 9, "c3_6": 9, "c3_7": 8, "c3_8": 8, "c4_1": 17, "c4_2": 17, "c4_3": 13, "c4_4": 13, "c4_5": 9, "c4_6": 8, "c4_7": 8, "c5_1": 22, "c5_2": 13, "c5_3": 13, "c5_4": 13, "c5_5": 9, "c5_6": 9, "c5_7": 5, "c5_8": 5}, "comments": {"c1_1": "Engineered clean Next.js SPA with stateful cache and modular routing. Handled edge cases seamlessly.", "c1_2": "Followed strict ESLint/Prettier standards and DRY conventions throughout all pull requests.", "c1_3": "Solid conceptual understanding of JavaScript event loop, closures, and React reconciliation.", "c1_4": "Clean commit history using conventional commits; branch protection respected.", "c1_5": "Fluid mobile layout across 320px to 4K displays with accessible touch targets.", "c1_6": "Used Chrome DevTools memory profiling effectively to eliminate a render bottleneck.", "c1_7": "Configured Vercel deployment with environment variables and custom rewrites.", "c1_8": "Quickly assimilated Tailwind CSS v4 and Zustand state management within 48 hours.", "c2_1": "Identified memory leak caused by un-cleared interval in custom hook; patched root cause cleanly.", "c2_2": "Extracted implicit edge conditions from vague product spec prior to coding.", "c2_3": "Solved complex algorithmic filtering requirement autonomously without needing mentor assistance.", "c2_4": "Investigated official GitHub issues to resolve third-party package hydration conflict.", "c2_5": "Modular, performant components with O(n) lookup complexity.", "c2_6": "Pivoted calmly when client revised the authentication schema mid-sprint.", "c2_7": "Documented regression test case to prevent repeat of earlier CSS specificity bug.", "c3_1": "Proactively unblocked teammates during daily standups; fostered high team morale.", "c3_2": "Authored descriptive PR descriptions with screenshots and test procedures.", "c3_3": "Took full ownership of the analytics integration and saw it through deployment.", "c3_4": "Faithfully implemented Figma spacing tokens, typography, and interactive hover states.", "c3_5": "Collaborated smoothly with backend developer on OpenAPI specification contracts.", "c3_6": "Received code review feedback maturely and made suggested refactors promptly.", "c3_7": "Volunteered 1 hour to pair-program with a junior trainee on async data fetching.", "c3_8": "De-escalated a debate over state management by building an objective benchmark comparison.", "c4_1": "Prepared structured list of clarification questions before sprint kickoff.", "c4_2": "Communicated progress to stakeholders with polite, jargon-free explanations.", "c4_3": "Written Slack and email messages are concise, well-structured, and actionable.", "c4_4": "Explained client-side caching mechanism clearly to non-technical stakeholders.", "c4_5": "Daily async standup updates posted punctually every morning without prompting.", "c4_6": "Delivered engaging 5-minute live demo highlighting real end-user value.", "c4_7": "Handled difficult architecture questions calmly and accurately during sprint review.", "c5_1": "Delivered all sprint deliverables 4 hours ahead of deadline.", "c5_2": "Responded to high-priority PR comments within 20 minutes during work hours.", "c5_3": "Steady commit cadence throughout each working day; zero dark periods.", "c5_4": "Verified feature in production environment and confirmed bug fix with end user.", "c5_5": "Strictly adhered to code review, ticket progression, and branch naming standards.", "c5_6": "Ran full automated test suite and manual accessibility audit prior to review submission.", "c5_7": "100% on-time attendance for all standups and planning sessions.", "c5_8": "Maintained high emotional intelligence, courtesy, and professional demeanor."}}, {"id": "stu_sample_2", "studentId": "ITX-2026-094", "name": "Fatima Zahra", "email": "fatima.zahra@intellex.edu", "track": "Frontend Engineering", "batch": "Cohort 2026-A", "evaluator": "Sarah Jenkins", "evaluatorTitle": "Staff UI/UX Architect", "assessmentDate": "2026-11-19", "notes": "Assessment partially complete. Demonstrates high visual fidelity and CSS capability. Category 4 and 5 evaluations in progress.", "createdAt": "2026-11-12T11:00:00Z", "updatedAt": "2026-11-19T10:15:00Z", "marks": {"c1_1": 20, "c1_2": 12, "c1_3": 11, "c1_4": 8, "c1_5": 10, "c1_6": 8, "c1_7": 4, "c1_8": 4, "c2_1": 19, "c2_2": 12, "c2_3": 15, "c2_4": 8, "c2_5": 12, "c2_6": 7, "c2_7": 4, "c3_1": 16, "c3_2": 11, "c3_3": 12, "c3_4": 9}, "comments": {"c1_1": "Strong UI implementation; component hierarchy is logical and easy to maintain.", "c1_5": "Pixel-perfect fidelity across responsive viewports. Exceptional CSS grid craftsmanship.", "c2_1": "Diagnosed tricky layout shifting bug by tracking layout thrashing in performance tab.", "c3_4": "Works exceptionally well with design team; catches micro-interactions specified in Figma."}}, {"id": "stu_sample_3", "studentId": "ITX-2026-112", "name": "Vikram Malhotra", "email": "vikram.malhotra@intellex.edu", "track": "DevOps & Cloud Systems", "batch": "Cohort 2026-B", "evaluator": "David Chen", "evaluatorTitle": "Principal Infrastructure Engineer", "assessmentDate": "2026-11-20", "notes": "New candidate enrolled in DevOps track. Initial baseline assessment pending evaluation.", "createdAt": "2026-11-19T14:00:00Z", "updatedAt": "2026-11-19T14:00:00Z", "marks": {}, "comments": {}}];
+        }
+      },
+
+      saveStudents() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(this.students));
+        } catch (e) {
+          console.error("Failed to save to localStorage:", e);
+          this.showToast("Failed to write to browser local storage. Storage might be full.", "error");
+        }
+      },
+
+      resetToSampleData() {
+        if (confirm("Reset to default sample data? Any unbacked-up student assessments will be replaced.")) {
+          this.students = [{"id": "stu_sample_1", "studentId": "ITX-2026-081", "name": "Aarav Patel", "email": "aarav.patel@intellex.edu", "track": "Full Stack Web Engineering", "batch": "Cohort 2026-A", "evaluator": "Dr. Marcus Vance", "evaluatorTitle": "Lead Engineering Evaluator", "assessmentDate": "2026-11-18", "notes": "Demonstrates outstanding system execution, strong autonomous problem solving, and exemplary professional communication.", "createdAt": "2026-11-10T09:00:00Z", "updatedAt": "2026-11-18T16:45:00Z", "marks": {"c1_1": 22, "c1_2": 13, "c1_3": 13, "c1_4": 9, "c1_5": 9, "c1_6": 9, "c1_7": 4, "c1_8": 4, "c2_1": 22, "c2_2": 13, "c2_3": 17, "c2_4": 9, "c2_5": 13, "c2_6": 8, "c2_7": 4, "c3_1": 18, "c3_2": 13, "c3_3": 14, "c3_4": 8, "c3_5": 9, "c3_6": 9, "c3_7": 8, "c3_8": 8, "c4_1": 17, "c4_2": 17, "c4_3": 13, "c4_4": 13, "c4_5": 9, "c4_6": 8, "c4_7": 8, "c5_1": 22, "c5_2": 13, "c5_3": 13, "c5_4": 13, "c5_5": 9, "c5_6": 9, "c5_7": 5, "c5_8": 5}, "comments": {"c1_1": "Engineered clean Next.js SPA with stateful cache and modular routing. Handled edge cases seamlessly.", "c1_2": "Followed strict ESLint/Prettier standards and DRY conventions throughout all pull requests.", "c1_3": "Solid conceptual understanding of JavaScript event loop, closures, and React reconciliation.", "c1_4": "Clean commit history using conventional commits; branch protection respected.", "c1_5": "Fluid mobile layout across 320px to 4K displays with accessible touch targets.", "c1_6": "Used Chrome DevTools memory profiling effectively to eliminate a render bottleneck.", "c1_7": "Configured Vercel deployment with environment variables and custom rewrites.", "c1_8": "Quickly assimilated Tailwind CSS v4 and Zustand state management within 48 hours.", "c2_1": "Identified memory leak caused by un-cleared interval in custom hook; patched root cause cleanly.", "c2_2": "Extracted implicit edge conditions from vague product spec prior to coding.", "c2_3": "Solved complex algorithmic filtering requirement autonomously without needing mentor assistance.", "c2_4": "Investigated official GitHub issues to resolve third-party package hydration conflict.", "c2_5": "Modular, performant components with O(n) lookup complexity.", "c2_6": "Pivoted calmly when client revised the authentication schema mid-sprint.", "c2_7": "Documented regression test case to prevent repeat of earlier CSS specificity bug.", "c3_1": "Proactively unblocked teammates during daily standups; fostered high team morale.", "c3_2": "Authored descriptive PR descriptions with screenshots and test procedures.", "c3_3": "Took full ownership of the analytics integration and saw it through deployment.", "c3_4": "Faithfully implemented Figma spacing tokens, typography, and interactive hover states.", "c3_5": "Collaborated smoothly with backend developer on OpenAPI specification contracts.", "c3_6": "Received code review feedback maturely and made suggested refactors promptly.", "c3_7": "Volunteered 1 hour to pair-program with a junior trainee on async data fetching.", "c3_8": "De-escalated a debate over state management by building an objective benchmark comparison.", "c4_1": "Prepared structured list of clarification questions before sprint kickoff.", "c4_2": "Communicated progress to stakeholders with polite, jargon-free explanations.", "c4_3": "Written Slack and email messages are concise, well-structured, and actionable.", "c4_4": "Explained client-side caching mechanism clearly to non-technical stakeholders.", "c4_5": "Daily async standup updates posted punctually every morning without prompting.", "c4_6": "Delivered engaging 5-minute live demo highlighting real end-user value.", "c4_7": "Handled difficult architecture questions calmly and accurately during sprint review.", "c5_1": "Delivered all sprint deliverables 4 hours ahead of deadline.", "c5_2": "Responded to high-priority PR comments within 20 minutes during work hours.", "c5_3": "Steady commit cadence throughout each working day; zero dark periods.", "c5_4": "Verified feature in production environment and confirmed bug fix with end user.", "c5_5": "Strictly adhered to code review, ticket progression, and branch naming standards.", "c5_6": "Ran full automated test suite and manual accessibility audit prior to review submission.", "c5_7": "100% on-time attendance for all standups and planning sessions.", "c5_8": "Maintained high emotional intelligence, courtesy, and professional demeanor."}}, {"id": "stu_sample_2", "studentId": "ITX-2026-094", "name": "Fatima Zahra", "email": "fatima.zahra@intellex.edu", "track": "Frontend Engineering", "batch": "Cohort 2026-A", "evaluator": "Sarah Jenkins", "evaluatorTitle": "Staff UI/UX Architect", "assessmentDate": "2026-11-19", "notes": "Assessment partially complete. Demonstrates high visual fidelity and CSS capability. Category 4 and 5 evaluations in progress.", "createdAt": "2026-11-12T11:00:00Z", "updatedAt": "2026-11-19T10:15:00Z", "marks": {"c1_1": 20, "c1_2": 12, "c1_3": 11, "c1_4": 8, "c1_5": 10, "c1_6": 8, "c1_7": 4, "c1_8": 4, "c2_1": 19, "c2_2": 12, "c2_3": 15, "c2_4": 8, "c2_5": 12, "c2_6": 7, "c2_7": 4, "c3_1": 16, "c3_2": 11, "c3_3": 12, "c3_4": 9}, "comments": {"c1_1": "Strong UI implementation; component hierarchy is logical and easy to maintain.", "c1_5": "Pixel-perfect fidelity across responsive viewports. Exceptional CSS grid craftsmanship.", "c2_1": "Diagnosed tricky layout shifting bug by tracking layout thrashing in performance tab.", "c3_4": "Works exceptionally well with design team; catches micro-interactions specified in Figma."}}, {"id": "stu_sample_3", "studentId": "ITX-2026-112", "name": "Vikram Malhotra", "email": "vikram.malhotra@intellex.edu", "track": "DevOps & Cloud Systems", "batch": "Cohort 2026-B", "evaluator": "David Chen", "evaluatorTitle": "Principal Infrastructure Engineer", "assessmentDate": "2026-11-20", "notes": "New candidate enrolled in DevOps track. Initial baseline assessment pending evaluation.", "createdAt": "2026-11-19T14:00:00Z", "updatedAt": "2026-11-19T14:00:00Z", "marks": {}, "comments": {}}];
+          this.saveStudents();
+          this.renderStats();
+          this.renderStudentsList();
+          this.showToast("Default sample data restored successfully.", "success");
+        }
+      },
+
+      navigateTo(view, updateHash = true) {
+        this.activeView = view;
+        document.getElementById("viewDashboard").style.display = view === "dashboard" ? "block" : "none";
+        document.getElementById("viewAssessment").style.display = view === "assess" ? "block" : "none";
+
+        if (updateHash) {
+          if (view === "dashboard") {
+            window.location.hash = "dashboard";
+          } else if (view === "assess" && this.activeStudentId) {
+            window.location.hash = `assess/${this.activeStudentId}`;
+          }
+        }
+
+        if (view === "dashboard") {
+          this.renderStats();
+          this.renderStudentsList();
+        }
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      },
+
+      // --- CALCULATIONS ---
+      calculateStudentStats(student) {
+        let totalAssessed = 0;
+        let totalMarksObtained = 0;
+        const totalPossibleMarks = 495;
+        const totalCriteriaCount = 38;
+
+        const categoryStats = CRITERIA_CATEGORIES.map(cat => {
+          let catAssessed = 0;
+          let catMarks = 0;
+          cat.criteria.forEach(crit => {
+            const mark = student.marks ? student.marks[crit.id] : undefined;
+            if (mark !== undefined && mark !== null && mark !== "" && !isNaN(Number(mark))) {
+              catAssessed++;
+              catMarks += Number(mark);
+            }
+          });
+          totalAssessed += catAssessed;
+          totalMarksObtained += catMarks;
+          const isComplete = catAssessed === cat.criteria.length;
+          const catPercentage = isComplete ? (catMarks / cat.maxMarks) * 100 : null;
+          return {
+            categoryId: cat.id,
+            categoryName: cat.name,
+            shortName: cat.shortName,
+            maxMarks: cat.maxMarks,
+            assessedCount: catAssessed,
+            totalCriteria: cat.criteria.length,
+            marksObtained: catMarks,
+            isComplete: isComplete,
+            percentage: catPercentage
+          };
+        });
+
+        const isFullyAssessed = totalAssessed === totalCriteriaCount;
+        let finalPercentage = null;
+        let evaluationLevel = { label: "NOT ASSESSED", class: "band-unassessed" };
+
+        if (isFullyAssessed) {
+          finalPercentage = (totalMarksObtained / totalPossibleMarks) * 100;
+          evaluationLevel = getEvaluationBand(finalPercentage);
+        }
+
+        return {
+          totalAssessed,
+          totalCriteriaCount,
+          totalMarksObtained,
+          totalPossibleMarks,
+          isFullyAssessed,
+          finalPercentage,
+          evaluationLevel,
+          categoryStats
+        };
+      },
+
+      // --- DASHBOARD RENDERING ---
+      renderStats() {
+        const total = this.students.length;
+        let completeCount = 0;
+        let totalScoreSum = 0;
+
+        this.students.forEach(s => {
+          const stats = this.calculateStudentStats(s);
+          if (stats.isFullyAssessed) {
+            completeCount++;
+            totalScoreSum += stats.finalPercentage;
+          }
+        });
+
+        document.getElementById("statTotalStudents").textContent = total;
+        document.getElementById("statFullyAssessed").textContent = completeCount;
+        document.getElementById("statPendingAssessment").textContent = total - completeCount;
+
+        if (completeCount > 0) {
+          const avg = (totalScoreSum / completeCount).toFixed(1);
+          document.getElementById("statClassAverage").textContent = `${avg}%`;
+        } else {
+          document.getElementById("statClassAverage").textContent = "—";
+        }
+      },
+
+      renderStudentsList() {
+        const query = (document.getElementById("searchInput").value || "").toLowerCase().trim();
+        const statusFilter = document.getElementById("statusFilter").value;
+        const sortBy = document.getElementById("sortBy").value;
+        const container = document.getElementById("studentsListContainer");
+
+        let filtered = this.students.filter(student => {
+          const matchesQuery = !query || 
+            (student.name && student.name.toLowerCase().includes(query)) ||
+            (student.studentId && student.studentId.toLowerCase().includes(query)) ||
+            (student.track && student.track.toLowerCase().includes(query)) ||
+            (student.batch && student.batch.toLowerCase().includes(query)) ||
+            (student.evaluator && student.evaluator.toLowerCase().includes(query));
+
+          if (!matchesQuery) return false;
+
+          const stats = this.calculateStudentStats(student);
+          if (statusFilter === "complete") return stats.isFullyAssessed;
+          if (statusFilter === "pending") return !stats.isFullyAssessed;
+          return true;
+        });
+
+        // Sorting
+        filtered.sort((a, b) => {
+          if (sortBy === "name") {
+            return (a.name || "").localeCompare(b.name || "");
+          } else if (sortBy === "scoreHigh" || sortBy === "scoreLow") {
+            const statsA = this.calculateStudentStats(a);
+            const statsB = this.calculateStudentStats(b);
+            const scoreA = statsA.totalMarksObtained;
+            const scoreB = statsB.totalMarksObtained;
+            return sortBy === "scoreHigh" ? scoreB - scoreA : scoreA - scoreB;
+          } else {
+            // recently updated
+            return new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0);
+          }
+        });
+
+        if (filtered.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+              <h3>No student assessments found</h3>
+              <p>No candidates match your current search criteria. Try modifying your filter or enroll a new student.</p>
+              <button class="btn btn-primary" onclick="App.openAddStudentModal()">+ Add New Student</button>
+            </div>
+          `;
+          return;
+        }
+
+        let html = "";
+        filtered.forEach(student => {
+          const stats = this.calculateStudentStats(student);
+          const initials = (student.name || "ST").split(" ").map(w => w[0]).join("").toUpperCase().substring(0, 2);
+          const progressPct = Math.round((stats.totalAssessed / stats.totalCriteriaCount) * 100);
+
+          let scoreDisplay = "";
+          let levelBadge = "";
+
+          if (stats.isFullyAssessed) {
+            scoreDisplay = `
+              <div style="text-align:right;">
+                <div style="font-size:1.15rem; font-weight:800; font-family:var(--font-mono); color:var(--slate-900);">
+                  ${stats.totalMarksObtained} <span style="font-size:0.8rem; color:var(--slate-500); font-weight:500;">/ ${stats.totalPossibleMarks}</span>
+                </div>
+                <div style="font-size:0.8rem; font-weight:700; color:var(--accent);">
+                  ${stats.finalPercentage.toFixed(1)}% Score
+                </div>
+              </div>
+            `;
+            levelBadge = `<span class="badge ${stats.evaluationLevel.class}">${stats.evaluationLevel.label}</span>`;
+          } else {
+            scoreDisplay = `
+              <div style="text-align:right;">
+                <div style="font-size:1.15rem; font-weight:800; font-family:var(--font-mono); color:var(--slate-600);">
+                  ${stats.totalMarksObtained} <span style="font-size:0.8rem; color:var(--slate-400); font-weight:500;">/ ${stats.totalPossibleMarks}</span>
+                </div>
+                <div style="font-size:0.75rem; color:var(--warning-text); font-weight:600;">
+                  ${stats.totalCriteriaCount - stats.totalAssessed} Unassessed
+                </div>
+              </div>
+            `;
+            levelBadge = `<span class="badge band-unassessed">NOT ASSESSED (${stats.totalAssessed}/${stats.totalCriteriaCount})</span>`;
+          }
+
+          html += `
+            <div class="student-card">
+              <div class="student-info">
+                <div class="student-avatar">${initials}</div>
+                <div class="student-name-block">
+                  <h4>${this.escapeHtml(student.name)}</h4>
+                  <div class="student-meta">
+                    <span class="badge badge-slate" style="font-family:var(--font-mono);">${this.escapeHtml(student.studentId || "NO-ID")}</span>
+                    <span>${this.escapeHtml(student.batch || "")}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <span class="student-track-badge">${this.escapeHtml(student.track || "General")}</span>
+                <div class="student-evaluator-meta">
+                  Evaluator: <strong>${this.escapeHtml(student.evaluator || "Unassigned")}</strong>
+                </div>
+              </div>
+
+              <div class="progress-col">
+                <div class="progress-header">
+                  <span>Assessed: ${stats.totalAssessed}/${stats.totalCriteriaCount}</span>
+                  <span>${progressPct}%</span>
+                </div>
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill ${stats.isFullyAssessed ? 'complete' : ''}" style="width: ${progressPct}%;"></div>
+                </div>
+                <div style="margin-top:0.25rem;">
+                  ${levelBadge}
+                </div>
+              </div>
+
+              <div class="student-actions">
+                ${scoreDisplay}
+
+                <button class="btn btn-primary btn-sm" onclick="App.openAssessment('${student.id}')" title="Open student assessment and mark criteria">
+                  Evaluate
+                </button>
+
+                <button class="btn btn-white btn-sm" onclick="App.openDownloadModal('${student.id}')" title="Download marks report for this student">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                  </svg>
+                  Download Marks
+                </button>
+
+                <button class="btn btn-outline btn-sm btn-icon" onclick="App.openEditStudentModal('${student.id}')" title="Edit student info">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 20h9"></path>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                  </svg>
+                </button>
+
+                <button class="btn btn-danger-outline btn-sm btn-icon" onclick="App.openDeleteModal('${student.id}')" title="Delete student">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+      },
+
+      // --- ASSESSMENT VIEW LOGIC ---
+      openAssessment(studentId, updateHash = true) {
+        const student = this.students.find(s => s.id === studentId);
+        if (!student) {
+          this.showToast("Student not found.", "error");
+          this.navigateTo("dashboard");
+          return;
+        }
+
+        this.activeStudentId = studentId;
+        this.activeCategoryIndex = 0;
+        this.renderAssessmentView();
+        this.navigateTo("assess", updateHash);
+      },
+
+      renderAssessmentView() {
+        const student = this.students.find(s => s.id === this.activeStudentId);
+        if (!student) return;
+
+        const stats = this.calculateStudentStats(student);
+
+        // Header info
+        document.getElementById("assessStudentName").textContent = student.name;
+        document.getElementById("assessStudentId").textContent = student.studentId || "ID NOT SET";
+        document.getElementById("assessStudentTrack").textContent = student.track || "Standard Track";
+        document.getElementById("assessStudentBatch").textContent = student.batch || "No Batch";
+        document.getElementById("assessStudentEvaluator").textContent = student.evaluator || "Unassigned";
+        document.getElementById("assessStudentDate").textContent = student.assessmentDate || "Not recorded";
+        document.getElementById("assessStudentProgress").textContent = `${stats.totalAssessed} of ${stats.totalCriteriaCount} criteria assessed (${Math.round((stats.totalAssessed / stats.totalCriteriaCount) * 100)}%)`;
+
+        // Score Pill
+        let scorePillHtml = "";
+        if (stats.isFullyAssessed) {
+          scorePillHtml = `
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <span class="badge ${stats.evaluationLevel.class}" style="font-size:0.85rem; padding:0.4rem 0.85rem;">
+                ${stats.finalPercentage.toFixed(1)}% · ${stats.evaluationLevel.label}
+              </span>
+              <span style="font-family:var(--font-mono); font-weight:800; font-size:1.1rem; color:var(--slate-800);">
+                ${stats.totalMarksObtained} / ${stats.totalPossibleMarks}
+              </span>
+            </div>
+          `;
+        } else {
+          scorePillHtml = `
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <span class="badge band-unassessed" style="font-size:0.85rem; padding:0.4rem 0.85rem;">
+                NOT ASSESSED (${stats.totalCriteriaCount - stats.totalAssessed} remaining)
+              </span>
+              <span style="font-family:var(--font-mono); font-weight:800; font-size:1.1rem; color:var(--slate-600);">
+                ${stats.totalMarksObtained} / ${stats.totalPossibleMarks}
+              </span>
+            </div>
+          `;
+        }
+        document.getElementById("assessHeaderScorePill").innerHTML = scorePillHtml;
+
+        // Render Tabs
+        this.renderCategoryTabs(stats);
+
+        // Render Active Tab Content
+        if (this.activeCategoryIndex === 5) {
+          document.getElementById("criteriaListPanel").style.display = "none";
+          document.getElementById("summaryTabPanel").style.display = "block";
+          this.renderSummaryTab(student, stats);
+        } else {
+          document.getElementById("criteriaListPanel").style.display = "block";
+          document.getElementById("summaryTabPanel").style.display = "none";
+          this.renderCriteriaList(student);
+        }
+      },
+
+      renderCategoryTabs(stats) {
+        const tabsNav = document.getElementById("categoryTabsNav");
+        let html = "";
+
+        CRITERIA_CATEGORIES.forEach((cat, idx) => {
+          const catStat = stats.categoryStats[idx];
+          const isActive = this.activeCategoryIndex === idx;
+          const badgeClass = catStat.isComplete ? "complete" : "";
+          const checkIcon = catStat.isComplete ? "✓ " : "";
+
+          html += `
+            <button class="cat-tab-btn ${isActive ? 'active' : ''}" onclick="App.switchCategoryTab(${idx})">
+              <span>${cat.name}</span>
+              <span class="cat-tab-badge ${badgeClass}">${checkIcon}${catStat.marksObtained}/${cat.maxMarks}</span>
+            </button>
+          `;
+        });
+
+        // Summary Tab
+        const isSummaryActive = this.activeCategoryIndex === 5;
+        const allDone = stats.isFullyAssessed;
+        html += `
+          <button class="cat-tab-btn ${isSummaryActive ? 'active' : ''}" onclick="App.switchCategoryTab(5)" style="background: ${isSummaryActive ? 'var(--primary)' : '#faf5ff'}; border-color: #d8b4fe;">
+            <span>★ Assessment Summary</span>
+            <span class="cat-tab-badge ${allDone ? 'complete' : ''}">${stats.totalAssessed}/38</span>
+          </button>
+        `;
+
+        tabsNav.innerHTML = html;
+      },
+
+      switchCategoryTab(index) {
+        this.activeCategoryIndex = index;
+        this.renderAssessmentView();
+        window.scrollTo({ top: 180, behavior: "smooth" });
+      },
+
+      renderCriteriaList(student) {
+        const cat = CRITERIA_CATEGORIES[this.activeCategoryIndex];
+        const panel = document.getElementById("criteriaListPanel");
+        const stats = this.calculateStudentStats(student);
+        const catStat = stats.categoryStats[this.activeCategoryIndex];
+
+        let html = `
+          <div style="background:white; border:1px solid var(--slate-200); border-radius:var(--radius-lg); padding:1rem 1.25rem; margin-bottom:1.25rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+            <div>
+              <h3 style="font-size:1.15rem; color:var(--slate-900);">${cat.name}</h3>
+              <p style="font-size:0.825rem; color:var(--slate-500); margin-top:0.15rem;">
+                Category Maximum: <strong>${cat.maxMarks} Marks</strong> across ${cat.criteria.length} criteria.
+              </p>
+            </div>
+            <div style="display:flex; align-items:center; gap:1rem;">
+              <div style="text-align:right;">
+                <span style="font-size:0.75rem; color:var(--slate-500); font-weight:600; text-transform:uppercase;">Category Subtotal</span>
+                <div style="font-size:1.25rem; font-weight:900; font-family:var(--font-mono); color:${catStat.isComplete ? 'var(--success-text)' : 'var(--slate-800)'};">
+                  ${catStat.marksObtained} <span style="font-size:0.85rem; color:var(--slate-400);">/ ${cat.maxMarks}</span>
+                </div>
+              </div>
+              <span class="badge ${catStat.isComplete ? 'badge-green' : 'badge-slate'}" style="font-size:0.8rem; padding:0.35rem 0.65rem;">
+                ${catStat.assessedCount} of ${cat.criteria.length} Assessed
+              </span>
+            </div>
+          </div>
+        `;
+
+        cat.criteria.forEach((crit, critIndex) => {
+          const rawMark = student.marks ? student.marks[crit.id] : undefined;
+          const isAssessed = rawMark !== undefined && rawMark !== null && rawMark !== "" && !isNaN(Number(rawMark));
+          const currentMark = isAssessed ? Number(rawMark) : "";
+          const comment = student.comments ? (student.comments[crit.id] || "") : "";
+
+          // Presets (e.g. 0%, 25%, 50%, 75%, 100%)
+          const p0 = 0;
+          const p25 = Math.round(crit.maxMarks * 0.25);
+          const p50 = Math.round(crit.maxMarks * 0.50);
+          const p75 = Math.round(crit.maxMarks * 0.75);
+          const p100 = crit.maxMarks;
+
+          let statusBadge = "";
+          if (isAssessed) {
+            statusBadge = `<span class="badge badge-green">ASSESSED: ${currentMark} / ${crit.maxMarks}</span>`;
+          } else {
+            statusBadge = `<span class="badge band-unassessed">NOT ASSESSED</span>`;
+          }
+
+          html += `
+            <div class="criterion-card ${isAssessed ? 'is-assessed' : 'is-unassessed'}" id="card_${crit.id}">
+              <div class="criterion-header">
+                <div class="criterion-title-wrap">
+                  <h4>
+                    <span>${critIndex + 1}. ${crit.name}</span>
+                    <span class="criterion-max-pill">${crit.maxMarks} Max Marks</span>
+                  </h4>
+                </div>
+                <div>
+                  ${statusBadge}
+                </div>
+              </div>
+
+              <!-- MARK ENTRY ROW -->
+              <div class="mark-entry-row">
+                <div class="input-mark-wrap">
+                  <label for="input_${crit.id}" style="font-size:0.8rem; font-weight:700; color:var(--slate-700);">Marks Awarded:</label>
+                  <input 
+                    type="number" 
+                    id="input_${crit.id}" 
+                    class="mark-input" 
+                    min="0" 
+                    max="${crit.maxMarks}" 
+                    step="1" 
+                    value="${currentMark}" 
+                    placeholder="—"
+                    oninput="App.handleMarkInput('${crit.id}', ${crit.maxMarks}, this.value)"
+                  >
+                  <span style="font-family:var(--font-mono); font-weight:700; color:var(--slate-400);">/ ${crit.maxMarks}</span>
+                </div>
+
+                <div class="quick-preset-btns">
+                  <span style="font-size:0.75rem; color:var(--slate-500); align-self:center; margin-right:0.2rem;">Quick:</span>
+                  <button type="button" class="btn-preset ${currentMark === p0 ? 'active' : ''}" onclick="App.setQuickMark('${crit.id}', ${crit.maxMarks}, ${p0})">0% (${p0})</button>
+                  <button type="button" class="btn-preset ${currentMark === p25 ? 'active' : ''}" onclick="App.setQuickMark('${crit.id}', ${crit.maxMarks}, ${p25})">25% (${p25})</button>
+                  <button type="button" class="btn-preset ${currentMark === p50 ? 'active' : ''}" onclick="App.setQuickMark('${crit.id}', ${crit.maxMarks}, ${p50})">50% (${p50})</button>
+                  <button type="button" class="btn-preset ${currentMark === p75 ? 'active' : ''}" onclick="App.setQuickMark('${crit.id}', ${crit.maxMarks}, ${p75})">75% (${p75})</button>
+                  <button type="button" class="btn-preset ${currentMark === p100 ? 'active' : ''}" onclick="App.setQuickMark('${crit.id}', ${crit.maxMarks}, ${p100})">100% (${p100})</button>
+                  
+                  ${isAssessed ? `
+                    <button type="button" class="btn-preset" style="color:var(--danger); border-color:#fecaca;" onclick="App.clearMark('${crit.id}')" title="Reset criterion to Unassessed">
+                      Reset (Unassess)
+                    </button>
+                  ` : ''}
+                </div>
+              </div>
+              <div id="error_${crit.id}" class="validation-error-msg" style="display:none;"></div>
+
+              <!-- QUALITATIVE COMMENTS -->
+              <div class="comment-box">
+                <label for="comment_${crit.id}">Evaluator Observations & Comments:</label>
+                <textarea 
+                  id="comment_${crit.id}" 
+                  class="comment-textarea" 
+                  placeholder="Record specific strengths, observed code samples, blockers, or coaching notes..."
+                  oninput="App.handleCommentInput('${crit.id}', this.value)"
+                >${this.escapeHtml(comment)}</textarea>
+              </div>
+
+              <!-- EXPANDABLE GUIDANCE ACCORDION -->
+              <div class="guidance-accordion">
+                <button type="button" class="guidance-toggle" onclick="App.toggleGuidance('${crit.id}')">
+                  <span style="display:flex; align-items:center; gap:0.4rem;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="16" x2="12" y2="12"></line>
+                      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    Evaluation Guidance, Scoring Rubric & Fallback Task
+                  </span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+                <div class="guidance-content" id="guidance_${crit.id}">
+                  <div class="guidance-section">
+                    <h5>👁️ What Evaluator Should Monitor:</h5>
+                    <p>${crit.monitor}</p>
+                  </div>
+                  <div class="guidance-section">
+                    <h5>📊 Marking Guidance (Score Ranges):</h5>
+                    <pre>${crit.guidance}</pre>
+                  </div>
+                  <div class="fallback-box">
+                    <strong>🛠️ Fallback Assessment Task:</strong><br>
+                    <span>${crit.fallback}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+
+        // Category Footer
+        const prevIdx = this.activeCategoryIndex - 1;
+        const nextIdx = this.activeCategoryIndex + 1;
+
+        html += `
+          <div class="category-footer-bar">
+            <div class="cat-subtotal-info">
+              <span>${cat.shortName} Total:</span>
+              <strong style="font-family:var(--font-mono); font-size:1.15rem;">${catStat.marksObtained} / ${cat.maxMarks}</strong>
+              <span style="font-size:0.8rem; font-weight:normal; color:var(--slate-500);">(${catStat.assessedCount} of ${cat.criteria.length} assessed)</span>
+            </div>
+
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+              ${prevIdx >= 0 ? `
+                <button class="btn btn-outline btn-sm" onclick="App.switchCategoryTab(${prevIdx})">
+                  ← Prev: ${CRITERIA_CATEGORIES[prevIdx].shortName}
+                </button>
+              ` : ''}
+
+              ${nextIdx < 5 ? `
+                <button class="btn btn-primary btn-sm" onclick="App.switchCategoryTab(${nextIdx})">
+                  Next: ${CRITERIA_CATEGORIES[nextIdx].shortName} →
+                </button>
+              ` : `
+                <button class="btn btn-primary btn-sm" onclick="App.switchCategoryTab(5)">
+                  View Final Summary ★
+                </button>
+              `}
+            </div>
+          </div>
+        `;
+
+        panel.innerHTML = html;
+      },
+
+      toggleGuidance(critId) {
+        const toggle = document.querySelector(`#card_${critId} .guidance-toggle`);
+        const content = document.getElementById(`guidance_${critId}`);
+        if (content) {
+          content.classList.toggle("open");
+          toggle.classList.toggle("open");
+        }
+      },
+
+      handleMarkInput(critId, maxMarks, value) {
+        const errorEl = document.getElementById(`error_${critId}`);
+        const inputEl = document.getElementById(`input_${critId}`);
+        const cardEl = document.getElementById(`card_${critId}`);
+        const student = this.students.find(s => s.id === this.activeStudentId);
+        if (!student) return;
+
+        if (value === "" || value === null || value === undefined) {
+          // unassessed
+          delete student.marks[critId];
+          errorEl.style.display = "none";
+          inputEl.classList.remove("error");
+          cardEl.classList.remove("has-error");
+          student.updatedAt = new Date().toISOString();
+          this.saveStudents();
+          this.refreshScoreUI();
+          return;
+        }
+
+        const num = Number(value);
+        if (isNaN(num) || num < 0 || num > maxMarks) {
+          errorEl.textContent = `Invalid mark! Must be between 0 and ${maxMarks}.`;
+          errorEl.style.display = "flex";
+          inputEl.classList.add("error");
+          cardEl.classList.add("has-error");
+          return;
+        }
+
+        errorEl.style.display = "none";
+        inputEl.classList.remove("error");
+        cardEl.classList.remove("has-error");
+
+        student.marks[critId] = num;
+        student.updatedAt = new Date().toISOString();
+        this.saveStudents();
+        this.refreshScoreUI();
+      },
+
+      setQuickMark(critId, maxMarks, markVal) {
+        const student = this.students.find(s => s.id === this.activeStudentId);
+        if (!student) return;
+
+        student.marks[critId] = markVal;
+        student.updatedAt = new Date().toISOString();
+        this.saveStudents();
+
+        const inputEl = document.getElementById(`input_${critId}`);
+        if (inputEl) inputEl.value = markVal;
+
+        const errorEl = document.getElementById(`error_${critId}`);
+        if (errorEl) errorEl.style.display = "none";
+
+        this.renderAssessmentView();
+        this.showToast(`Mark recorded: ${markVal}/${maxMarks}`, "info");
+      },
+
+      clearMark(critId) {
+        const student = this.students.find(s => s.id === this.activeStudentId);
+        if (!student) return;
+
+        delete student.marks[critId];
+        student.updatedAt = new Date().toISOString();
+        this.saveStudents();
+        this.renderAssessmentView();
+        this.showToast("Criterion reset to NOT ASSESSED.", "info");
+      },
+
+      handleCommentInput(critId, text) {
+        const student = this.students.find(s => s.id === this.activeStudentId);
+        if (!student) return;
+
+        if (!student.comments) student.comments = {};
+        student.comments[critId] = text;
+        student.updatedAt = new Date().toISOString();
+        this.saveStudents();
+      },
+
+      refreshScoreUI() {
+        const student = this.students.find(s => s.id === this.activeStudentId);
+        if (!student) return;
+
+        const stats = this.calculateStudentStats(student);
+        this.renderCategoryTabs(stats);
+
+        // Update score pill in header
+        let scorePillHtml = "";
+        if (stats.isFullyAssessed) {
+          scorePillHtml = `
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <span class="badge ${stats.evaluationLevel.class}" style="font-size:0.85rem; padding:0.4rem 0.85rem;">
+                ${stats.finalPercentage.toFixed(1)}% · ${stats.evaluationLevel.label}
+              </span>
+              <span style="font-family:var(--font-mono); font-weight:800; font-size:1.1rem; color:var(--slate-800);">
+                ${stats.totalMarksObtained} / ${stats.totalPossibleMarks}
+              </span>
+            </div>
+          `;
+        } else {
+          scorePillHtml = `
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <span class="badge band-unassessed" style="font-size:0.85rem; padding:0.4rem 0.85rem;">
+                NOT ASSESSED (${stats.totalCriteriaCount - stats.totalAssessed} remaining)
+              </span>
+              <span style="font-family:var(--font-mono); font-weight:800; font-size:1.1rem; color:var(--slate-600);">
+                ${stats.totalMarksObtained} / ${stats.totalPossibleMarks}
+              </span>
+            </div>
+          `;
+        }
+        document.getElementById("assessHeaderScorePill").innerHTML = scorePillHtml;
+        document.getElementById("assessStudentProgress").textContent = `${stats.totalAssessed} of ${stats.totalCriteriaCount} criteria assessed (${Math.round((stats.totalAssessed / stats.totalCriteriaCount) * 100)}%)`;
+      },
+
+      // --- SUMMARY TAB RENDERING ---
+      renderSummaryTab(student, stats) {
+        const panel = document.getElementById("summaryTabPanel");
+        let html = "";
+
+        // Unassessed warning or final score hero
+        if (!stats.isFullyAssessed) {
+          const unassessedCount = stats.totalCriteriaCount - stats.totalAssessed;
+
+          let missingListHtml = "";
+          CRITERIA_CATEGORIES.forEach((cat, catIdx) => {
+            cat.criteria.forEach(crit => {
+              const mark = student.marks ? student.marks[crit.id] : undefined;
+              if (mark === undefined || mark === null || mark === "" || isNaN(Number(mark))) {
+                missingListHtml += `
+                  <button class="missing-chip" onclick="App.jumpToCriterion(${catIdx}, '${crit.id}')">
+                    ${crit.name} (${cat.shortName}) →
+                  </button>
+                `;
+              }
+            });
+          });
+
+          html += `
+            <div class="unassessed-alert-box">
+              <h4>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                  <line x1="12" y1="9" x2="12" y2="13"></line>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                Evaluation Incomplete — Final Percentage Locked
+              </h4>
+              <p>
+                As required by Intellex grading standards, a final percentage and evaluation level cannot be computed until <strong>every criterion (all 38)</strong> has been formally assessed.
+                Currently, <strong>${unassessedCount} criteria remain NOT ASSESSED</strong>. Unassessed criteria are never automatically treated as zero.
+              </p>
+              <div style="margin-top:0.75rem;">
+                <strong>Click any unassessed criterion below to evaluate it:</strong>
+                <div class="missing-criteria-list">
+                  ${missingListHtml}
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        // Summary Hero Card
+        let heroScoreBlock = "";
+        if (stats.isFullyAssessed) {
+          heroScoreBlock = `
+            <div class="summary-score-hero">
+              <h3>Overall Final Assessment</h3>
+              <div class="big-score">
+                ${stats.totalMarksObtained}<span> / ${stats.totalPossibleMarks}</span>
+              </div>
+              <p style="color:#93c5fd; font-size:1.1rem; font-weight:700;">
+                ${stats.finalPercentage.toFixed(1)}% Standardized Score
+              </p>
+            </div>
+            <div class="summary-level-display">
+              <span style="font-size:0.85rem; text-transform:uppercase; color:#93c5fd; font-weight:700;">Awarded Evaluation Band</span>
+              <div class="summary-level-pill ${stats.evaluationLevel.class}">
+                ★ ${stats.evaluationLevel.label}
+              </div>
+              <p style="font-size:0.85rem; color:#cbd5e1;">
+                Candidate satisfies all threshold benchmarks for this evaluation band. All 38 assessment criteria recorded.
+              </p>
+            </div>
+          `;
+        } else {
+          heroScoreBlock = `
+            <div class="summary-score-hero">
+              <h3>Partial Assessment Subtotal</h3>
+              <div class="big-score">
+                ${stats.totalMarksObtained}<span> / ${stats.totalPossibleMarks}</span>
+              </div>
+              <p style="color:#fcd34d; font-size:1rem; font-weight:600;">
+                ${stats.totalAssessed} of ${stats.totalCriteriaCount} criteria assessed
+              </p>
+            </div>
+            <div class="summary-level-display">
+              <span style="font-size:0.85rem; text-transform:uppercase; color:#cbd5e1; font-weight:700;">Evaluation Status</span>
+              <div class="summary-level-pill band-unassessed">
+                NOT ASSESSED
+              </div>
+              <p style="font-size:0.85rem; color:#cbd5e1;">
+                Complete all 38 criteria to unlock the final percentage and evaluation classification.
+              </p>
+            </div>
+          `;
+        }
+
+        html += `
+          <div class="summary-hero-card">
+            ${heroScoreBlock}
+          </div>
+        `;
+
+        // Category Cards Grid
+        html += `<div class="summary-categories-grid">`;
+        stats.categoryStats.forEach((catStat, idx) => {
+          const pct = Math.round((catStat.assessedCount / catStat.totalCriteria) * 100);
+          const scorePct = catStat.isComplete ? ((catStat.marksObtained / catStat.maxMarks) * 100).toFixed(1) + "%" : "Pending";
+
+          html += `
+            <div class="cat-summary-card">
+              <div class="cat-summary-card-header">
+                <h4>${catStat.shortName}</h4>
+                <span class="badge ${catStat.isComplete ? 'badge-green' : 'badge-slate'}">
+                  ${catStat.isComplete ? 'Complete' : `${catStat.assessedCount}/${catStat.totalCriteria}`}
+                </span>
+              </div>
+
+              <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:0.4rem;">
+                <span style="font-size:0.8rem; color:var(--slate-500);">Category Score:</span>
+                <span style="font-size:1.15rem; font-weight:800; font-family:var(--font-mono); color:var(--slate-900);">
+                  ${catStat.marksObtained} <span style="font-size:0.8rem; color:var(--slate-400);">/ ${catStat.maxMarks}</span>
+                </span>
+              </div>
+
+              <div class="progress-bar-bg" style="margin-bottom:0.75rem;">
+                <div class="progress-bar-fill ${catStat.isComplete ? 'complete' : ''}" style="width:${pct}%;"></div>
+              </div>
+
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:0.75rem; color:var(--slate-500);">Score Yield: <strong>${scorePct}</strong></span>
+                <button class="btn btn-outline btn-sm" onclick="App.switchCategoryTab(${idx})" style="padding:0.25rem 0.6rem; font-size:0.75rem;">
+                  Edit Marks →
+                </button>
+              </div>
+            </div>
+          `;
+        });
+        html += `</div>`;
+
+        // Action Buttons
+        html += `
+          <div style="background:white; border:1px solid var(--slate-200); border-radius:var(--radius-lg); padding:1.25rem; display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap; box-shadow:var(--shadow-sm);">
+            <div>
+              <h4 style="font-size:1rem; color:var(--slate-900);">Generate Formal Assessment Report</h4>
+              <p style="font-size:0.825rem; color:var(--slate-500);">
+                Export full individual mark report including all 38 criteria, comments, category breakdowns, and official rubric.
+              </p>
+            </div>
+            <div style="display:flex; gap:0.6rem; flex-wrap:wrap;">
+              <button class="btn btn-primary" onclick="App.openDownloadModal(App.activeStudentId)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                </svg>
+                Download Marks
+              </button>
+              <button class="btn btn-outline" onclick="App.navigateTo('dashboard')">
+                Back to Dashboard
+              </button>
+            </div>
+          </div>
+        `;
+
+        panel.innerHTML = html;
+      },
+
+      jumpToCriterion(categoryIndex, critId) {
+        this.activeCategoryIndex = categoryIndex;
+        this.renderAssessmentView();
+        setTimeout(() => {
+          const el = document.getElementById(`card_${critId}`);
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "center" });
+            el.style.boxShadow = "0 0 0 4px rgba(37, 99, 235, 0.4)";
+            setTimeout(() => { el.style.boxShadow = ""; }, 2000);
+          }
+        }, 150);
+      },
+
+      // --- MODAL CONTROLS ---
+      closeModals() {
+        document.querySelectorAll(".modal-overlay").forEach(m => m.classList.remove("active"));
+      },
+
+      openAddStudentModal() {
+        document.getElementById("studentModalTitle").textContent = "Add New Student";
+        document.getElementById("formStudentDbId").value = "";
+        document.getElementById("formStudentName").value = "";
+        document.getElementById("formStudentId").value = `ITX-2026-${Math.floor(100 + Math.random() * 900)}`;
+        document.getElementById("formStudentEmail").value = "";
+        document.getElementById("formStudentTrack").value = "Full Stack Web Engineering";
+        document.getElementById("formStudentBatch").value = "Cohort 2026-A";
+        document.getElementById("formAssessmentDate").value = new Date().toISOString().split("T")[0];
+        document.getElementById("formEvaluator").value = "Senior Lead Evaluator";
+        document.getElementById("formEvaluatorTitle").value = "Technical Assessor";
+        document.getElementById("formStudentNotes").value = "";
+        document.getElementById("studentFormModal").classList.add("active");
+      },
+
+      openEditStudentModal(studentId) {
+        const student = this.students.find(s => s.id === studentId);
+        if (!student) return;
+
+        document.getElementById("studentModalTitle").textContent = "Edit Student Details";
+        document.getElementById("formStudentDbId").value = student.id;
+        document.getElementById("formStudentName").value = student.name || "";
+        document.getElementById("formStudentId").value = student.studentId || "";
+        document.getElementById("formStudentEmail").value = student.email || "";
+        document.getElementById("formStudentTrack").value = student.track || "";
+        document.getElementById("formStudentBatch").value = student.batch || "";
+        document.getElementById("formAssessmentDate").value = student.assessmentDate || "";
+        document.getElementById("formEvaluator").value = student.evaluator || "";
+        document.getElementById("formEvaluatorTitle").value = student.evaluatorTitle || "";
+        document.getElementById("formStudentNotes").value = student.notes || "";
+        document.getElementById("studentFormModal").classList.add("active");
+      },
+
+      handleSaveStudent(e) {
+        e.preventDefault();
+        const dbId = document.getElementById("formStudentDbId").value;
+        const name = document.getElementById("formStudentName").value.trim();
+        const studentId = document.getElementById("formStudentId").value.trim() || `ITX-2026-${Math.floor(100 + Math.random() * 900)}`;
+        const email = document.getElementById("formStudentEmail").value.trim();
+        const track = document.getElementById("formStudentTrack").value.trim();
+        const batch = document.getElementById("formStudentBatch").value.trim();
+        const assessmentDate = document.getElementById("formAssessmentDate").value;
+        const evaluator = document.getElementById("formEvaluator").value.trim();
+        const evaluatorTitle = document.getElementById("formEvaluatorTitle").value.trim();
+        const notes = document.getElementById("formStudentNotes").value.trim();
+
+        if (!name) {
+          alert("Student name is required.");
+          return;
+        }
+
+        if (dbId) {
+          // Editing existing student
+          const student = this.students.find(s => s.id === dbId);
+          if (student) {
+            student.name = name;
+            student.studentId = studentId;
+            student.email = email;
+            student.track = track;
+            student.batch = batch;
+            student.assessmentDate = assessmentDate;
+            student.evaluator = evaluator;
+            student.evaluatorTitle = evaluatorTitle;
+            student.notes = notes;
+            student.updatedAt = new Date().toISOString();
+            this.saveStudents();
+            this.showToast("Student profile updated successfully.", "success");
+            if (this.activeView === "assess" && this.activeStudentId === dbId) {
+              this.renderAssessmentView();
+            }
+          }
+        } else {
+          // New student
+          const newId = "stu_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5);
+          const newStudent = {
+            id: newId,
+            name,
+            studentId,
+            email,
+            track,
+            batch,
+            assessmentDate,
+            evaluator,
+            evaluatorTitle,
+            notes,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            marks: {},
+            comments: {}
+          };
+          this.students.unshift(newStudent);
+          this.saveStudents();
+          this.showToast("New student registered successfully.", "success");
+        }
+
+        this.closeModals();
+        this.renderStats();
+        this.renderStudentsList();
+      },
+
+      openDeleteModal(studentId) {
+        const student = this.students.find(s => s.id === studentId);
+        if (!student) return;
+
+        document.getElementById("deleteStudentName").textContent = student.name;
+        document.getElementById("deleteStudentId").textContent = `${student.studentId || "No ID"} · ${student.track || ""}`;
+        document.getElementById("btnConfirmDeleteStudent").onclick = () => {
+          this.students = this.students.filter(s => s.id !== studentId);
+          this.saveStudents();
+          this.closeModals();
+          this.renderStats();
+          this.renderStudentsList();
+          this.showToast("Student deleted successfully.", "info");
+          if (this.activeStudentId === studentId) {
+            this.navigateTo("dashboard");
+          }
+        };
+        document.getElementById("deleteConfirmModal").classList.add("active");
+      },
+
+      openDownloadModal(studentId) {
+        const student = this.students.find(s => s.id === studentId);
+        if (!student) return;
+
+        const stats = this.calculateStudentStats(student);
+        document.getElementById("downloadModalStudentName").textContent = student.name;
+        document.getElementById("downloadModalStudentDetails").textContent = 
+          `${student.studentId || "NO-ID"} | ${student.track || "General"} | ${stats.totalAssessed}/38 Criteria Assessed`;
+
+        document.getElementById("btnTriggerPdfDownload").onclick = () => {
+          this.closeModals();
+          this.generatePrintableReport(studentId);
+        };
+
+        document.getElementById("btnTriggerCsvDownload").onclick = () => {
+          this.closeModals();
+          this.downloadStudentCSV(studentId);
+        };
+
+        document.getElementById("downloadModal").classList.add("active");
+      },
+
+      // --- EXPORT & DOWNLOAD LOGIC ---
+      downloadStudentCSV(studentId) {
+        const student = this.students.find(s => s.id === studentId);
+        if (!student) return;
+
+        const stats = this.calculateStudentStats(student);
+        let csv = "\uFEFF"; // UTF-8 BOM for clean Excel compatibility
+
+        // Header Metadata
+        csv += `"INTELLEX STUDENT ASSESSMENT REPORT"\n`;
+        csv += `"Student Name:","${this.escapeCsv(student.name)}"\n`;
+        csv += `"Student ID:","${this.escapeCsv(student.studentId || "")}"\n`;
+        csv += `"Email:","${this.escapeCsv(student.email || "")}"\n`;
+        csv += `"Track / Specialization:","${this.escapeCsv(student.track || "")}"\n`;
+        csv += `"Batch / Cohort:","${this.escapeCsv(student.batch || "")}"\n`;
+        csv += `"Evaluator:","${this.escapeCsv(student.evaluator || "")}"\n`;
+        csv += `"Assessment Date:","${this.escapeCsv(student.assessmentDate || "")}"\n`;
+        csv += `"Total Assessed Criteria:","${stats.totalAssessed} of 38"\n`;
+        csv += `"Overall Marks:","${stats.totalMarksObtained} / 495"\n`;
+        csv += `"Final Percentage:","${stats.isFullyAssessed ? stats.finalPercentage.toFixed(2) + '%' : 'NOT ASSESSED (All 38 criteria required)'}"\n`;
+        csv += `"Evaluation Level:","${stats.isFullyAssessed ? stats.evaluationLevel.label : 'NOT ASSESSED'}"\n\n`;
+
+        // Category Summary
+        csv += `"CATEGORY SUMMARY"\n`;
+        csv += `"Category","Category Max Marks","Marks Awarded","Status","Category Percentage"\n`;
+        stats.categoryStats.forEach(cs => {
+          csv += `"${this.escapeCsv(cs.categoryName)}",${cs.maxMarks},${cs.marksObtained},"${cs.isComplete ? 'Complete' : 'Incomplete'}",${cs.isComplete ? cs.percentage.toFixed(1) + '%' : 'Pending'}\n`;
+        });
+        csv += `\n`;
+
+        // Criterion-by-Criterion Table
+        csv += `"DETAILED CRITERION ASSESSMENT"\n`;
+        csv += `"Category","Criterion Name","Maximum Marks","Marks Awarded","Assessment Status","Evaluator Comments"\n`;
+
+        CRITERIA_CATEGORIES.forEach(cat => {
+          cat.criteria.forEach(crit => {
+            const rawMark = student.marks ? student.marks[crit.id] : undefined;
+            const isAssessed = rawMark !== undefined && rawMark !== null && rawMark !== "" && !isNaN(Number(rawMark));
+            const markStr = isAssessed ? Number(rawMark) : "NOT ASSESSED";
+            const statusStr = isAssessed ? "ASSESSED" : "NOT ASSESSED";
+            const comment = student.comments ? (student.comments[crit.id] || "") : "";
+
+            csv += `"${this.escapeCsv(cat.shortName)}","${this.escapeCsv(crit.name)}",${crit.maxMarks},${typeof markStr === 'number' ? markStr : '"' + markStr + '"'},"${statusStr}","${this.escapeCsv(comment)}"\n`;
+          });
+        });
+
+        const filename = `${(student.name || 'student').replace(/[^a-z0-9]/gi, '_').toLowerCase()}_assessment_report.csv`;
+        this.triggerDownload(csv, filename, "text/csv;charset=utf-8;");
+        this.showToast("Individual marks CSV report downloaded.", "success");
+      },
+
+      exportAllStudentsCSV() {
+        if (this.students.length === 0) {
+          this.showToast("No students to export.", "info");
+          return;
+        }
+
+        let csv = "\uFEFF";
+        csv += `"INTELLEX - ALL STUDENTS ASSESSMENT MASTER RECORD"\n\n`;
+        csv += `"Student Name","Student ID","Email","Track","Batch","Evaluator","Assessment Date","Assessed Criteria Count","Completion Status","Category 1: Technical (Max 95)","Category 2: Problem Solving (Max 100)","Category 3: Collaboration (Max 100)","Category 4: Communication (Max 100)","Category 5: Reliability (Max 100)","Total Marks Obtained","Overall Max Marks","Final Percentage","Evaluation Level"\n`;
+
+        this.students.forEach(student => {
+          const stats = this.calculateStudentStats(student);
+          const c1 = stats.categoryStats[0].marksObtained;
+          const c2 = stats.categoryStats[1].marksObtained;
+          const c3 = stats.categoryStats[2].marksObtained;
+          const c4 = stats.categoryStats[3].marksObtained;
+          const c5 = stats.categoryStats[4].marksObtained;
+
+          const pctStr = stats.isFullyAssessed ? stats.finalPercentage.toFixed(2) + "%" : "NOT ASSESSED";
+          const levelStr = stats.isFullyAssessed ? stats.evaluationLevel.label : "NOT ASSESSED";
+          const statusStr = stats.isFullyAssessed ? "Fully Assessed" : "Pending Completion";
+
+          csv += `"${this.escapeCsv(student.name)}","${this.escapeCsv(student.studentId || '')}","${this.escapeCsv(student.email || '')}","${this.escapeCsv(student.track || '')}","${this.escapeCsv(student.batch || '')}","${this.escapeCsv(student.evaluator || '')}","${this.escapeCsv(student.assessmentDate || '')}",${stats.totalAssessed},"${statusStr}",${c1},${c2},${c3},${c4},${c5},${stats.totalMarksObtained},495,"${pctStr}","${levelStr}"\n`;
+        });
+
+        const filename = `intellex_all_students_assessment_${new Date().toISOString().split('T')[0]}.csv`;
+        this.triggerDownload(csv, filename, "text/csv;charset=utf-8;");
+        this.showToast("Master cohort CSV downloaded successfully.", "success");
+      },
+
+      // PDF Report Generation (Formal Document layout + Print Engine + Screen Preview)
+      generatePrintableReport(studentId) {
+        const student = this.students.find(s => s.id === studentId);
+        if (!student) return;
+
+        const stats = this.calculateStudentStats(student);
+        const printArea = document.getElementById("printableReportArea");
+
+        let pctDisplay = stats.isFullyAssessed ? `${stats.finalPercentage.toFixed(1)}%` : "NOT ASSESSED";
+        let levelDisplay = stats.isFullyAssessed ? stats.evaluationLevel.label : "INCOMPLETE (38 Criteria Required)";
+
+        let rowsHtml = "";
+        CRITERIA_CATEGORIES.forEach(cat => {
+          const catStat = stats.categoryStats.find(cs => cs.categoryId === cat.id);
+          rowsHtml += `
+            <tr class="report-category-row">
+              <td colspan="4" style="padding:0.6rem; font-weight:800; font-size:0.85rem; background:#e2e8f0;">
+                ${cat.name} — Subtotal: ${catStat.marksObtained} / ${cat.maxMarks} Marks (${catStat.assessedCount}/${cat.criteria.length} Assessed)
+              </td>
+            </tr>
+          `;
+
+          cat.criteria.forEach((crit, idx) => {
+            const rawMark = student.marks ? student.marks[crit.id] : undefined;
+            const isAssessed = rawMark !== undefined && rawMark !== null && rawMark !== "" && !isNaN(Number(rawMark));
+            const markDisplay = isAssessed ? `<strong>${rawMark}</strong> / ${crit.maxMarks}` : `<span style="color:#64748b; font-weight:bold;">NOT ASSESSED</span>`;
+            const statusDisplay = isAssessed ? `<span style="color:#065f46; font-weight:bold;">ASSESSED</span>` : `<span style="color:#92400e; font-weight:bold;">PENDING</span>`;
+            const comment = student.comments ? (student.comments[crit.id] || "—") : "—";
+
+            rowsHtml += `
+              <tr>
+                <td style="width:30%; font-weight:600;">${idx + 1}. ${crit.name}</td>
+                <td style="width:15%; text-align:center;">${markDisplay}</td>
+                <td style="width:12%; text-align:center;">${statusDisplay}</td>
+                <td style="width:43%; font-size:0.75rem; color:#334155;">${this.escapeHtml(comment)}</td>
+              </tr>
+            `;
+          });
+        });
+
+        const reportHtml = `
+          <div class="report-sheet" style="max-width:900px; margin:0 auto; box-shadow:var(--shadow-sm); border-radius:var(--radius-sm); border:1px solid #cbd5e1;">
+            <div class="report-header-box">
+              <div class="report-title">
+                <h2>Intellex Student Assessment Report</h2>
+                <p>Standardized Competency Evaluation & Individual Mark Sheet</p>
+              </div>
+              <div style="text-align:right; font-size:0.8rem; color:#475569;">
+                <div>Doc Ref: ITX-RPT-${student.id.substring(4, 10).toUpperCase()}</div>
+                <div>Generated: ${new Date().toLocaleDateString()}</div>
+              </div>
+            </div>
+
+            <div class="report-meta-grid">
+              <div><strong>Student Name:</strong> ${this.escapeHtml(student.name)}</div>
+              <div><strong>Student ID:</strong> ${this.escapeHtml(student.studentId || "N/A")}</div>
+              <div><strong>Track:</strong> ${this.escapeHtml(student.track || "N/A")}</div>
+              <div><strong>Batch / Cohort:</strong> ${this.escapeHtml(student.batch || "N/A")}</div>
+              <div><strong>Evaluator:</strong> ${this.escapeHtml(student.evaluator || "N/A")}</div>
+              <div><strong>Assessment Date:</strong> ${this.escapeHtml(student.assessmentDate || "N/A")}</div>
+            </div>
+
+            <div class="report-summary-boxes">
+              <div class="report-metric-card">
+                <div class="num">${stats.totalMarksObtained} <span style="font-size:0.9rem; color:#64748b;">/ 495</span></div>
+                <div class="lbl">Total Marks Obtained</div>
+              </div>
+              <div class="report-metric-card">
+                <div class="num">${pctDisplay}</div>
+                <div class="lbl">Final Percentage</div>
+              </div>
+              <div class="report-metric-card" style="background:#f8fafc;">
+                <div class="num" style="font-size:1.15rem; color:#1e3a8a;">${levelDisplay}</div>
+                <div class="lbl">Evaluation Band Result</div>
+              </div>
+            </div>
+
+            <!-- RUBRIC REFERENCE BOX -->
+            <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:4px; padding:0.5rem 0.75rem; margin-bottom:1rem; font-size:0.72rem; color:#475569;">
+              <strong>Intellex Scoring Bands:</strong>
+              0–20% Unsatisfactory | 21–40% Heavy Guidance | 41–60% Basic Ability | 61–75% Autonomous Standard | 76–85% Strong Independent | 86–100% Exceptional/Lead
+            </div>
+
+            <table class="report-table">
+              <thead>
+                <tr>
+                  <th>Criterion</th>
+                  <th style="text-align:center;">Marks</th>
+                  <th style="text-align:center;">Status</th>
+                  <th>Evaluator Qualitative Feedback</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rowsHtml}
+              </tbody>
+            </table>
+
+            <div class="report-sign-grid">
+              <div>
+                <div class="sign-line"></div>
+                <strong>Evaluator Signature:</strong> ${this.escapeHtml(student.evaluator || "Assessor")}<br>
+                <span style="color:#64748b;">${this.escapeHtml(student.evaluatorTitle || "Lead Evaluator")}</span>
+              </div>
+              <div>
+                <div class="sign-line"></div>
+                <strong>Student Acknowledgement:</strong> ${this.escapeHtml(student.name)}<br>
+                <span style="color:#64748b;">Date: ________________________</span>
+              </div>
+            </div>
+          </div>
+        `;
+
+        printArea.innerHTML = reportHtml;
+
+        // Also render in screen preview modal
+        document.getElementById("reportPreviewModalBody").innerHTML = reportHtml;
+        document.getElementById("reportPreviewModal").classList.add("active");
+
+        // Trigger native print dialog which allows "Save as PDF"
+        setTimeout(() => {
+          window.print();
+        }, 200);
+      },
+
+      // --- BACKUP & RESTORE ---
+      openBackupModal() {
+        document.getElementById("restorePreviewBox").style.display = "none";
+        document.getElementById("restoreFileInput").value = "";
+        this.restoreDataCandidate = null;
+        document.getElementById("backupModal").classList.add("active");
+      },
+
+      exportBackupJSON() {
+        const payload = {
+          app: "Intellex Student Assessment Tool",
+          version: "1.0",
+          exportDate: new Date().toISOString(),
+          students: this.students
+        };
+        const str = JSON.stringify(payload, null, 2);
+        const filename = `intellex_assessment_backup_${new Date().toISOString().split('T')[0]}.json`;
+        this.triggerDownload(str, filename, "application/json");
+        this.showToast("Complete JSON backup file downloaded.", "success");
+      },
+
+      handleFileSelect(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const data = JSON.parse(event.target.result);
+            if (data && Array.isArray(data.students)) {
+              this.restoreDataCandidate = data.students;
+              document.getElementById("restorePreviewText").textContent = 
+                `Valid Intellex backup detected: Found ${data.students.length} student assessment record(s).`;
+              document.getElementById("restorePreviewBox").style.display = "block";
+            } else if (Array.isArray(data)) {
+              this.restoreDataCandidate = data;
+              document.getElementById("restorePreviewText").textContent = 
+                `Backup file detected: Found ${data.length} student assessment record(s).`;
+              document.getElementById("restorePreviewBox").style.display = "block";
+            } else {
+              alert("Unrecognized JSON backup format. Expected a list of students.");
+            }
+          } catch (err) {
+            alert("Error parsing JSON file: " + err.message);
+          }
+        };
+        reader.readAsText(file);
+      },
+
+      executeRestore(mode) {
+        if (!this.restoreDataCandidate) return;
+
+        if (mode === "replace") {
+          this.students = this.restoreDataCandidate;
+          this.saveStudents();
+          this.closeModals();
+          this.renderStats();
+          this.renderStudentsList();
+          this.showToast(`Restored ${this.students.length} students (all previous records replaced).`, "success");
+        } else if (mode === "merge") {
+          let added = 0;
+          this.restoreDataCandidate.forEach(candidate => {
+            const existingIdx = this.students.findIndex(s => s.id === candidate.id || s.studentId === candidate.studentId);
+            if (existingIdx >= 0) {
+              this.students[existingIdx] = candidate;
+            } else {
+              this.students.push(candidate);
+              added++;
+            }
+          });
+          this.saveStudents();
+          this.closeModals();
+          this.renderStats();
+          this.renderStudentsList();
+          this.showToast(`Merged backup records. Total students now: ${this.students.length}.`, "success");
+        }
+      },
+
+      // --- UTILITIES ---
+      triggerDownload(content, filename, mimeType) {
+        const blob = new Blob([content], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      },
+
+      escapeHtml(str) {
+        if (!str) return "";
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      },
+
+      escapeCsv(str) {
+        if (str === null || str === undefined) return "";
+        return String(str).replace(/"/g, '""');
+      },
+
+      showToast(msg, type = "info") {
+        const container = document.getElementById("toastContainer");
+        const toast = document.createElement("div");
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `
+          <span>${msg}</span>
+        `;
+        container.appendChild(toast);
+        setTimeout(() => {
+          toast.style.opacity = "0";
+          toast.style.transform = "translateY(10px)";
+          toast.style.transition = "all 0.25s ease";
+          setTimeout(() => toast.remove(), 250);
+        }, 3200);
+      },
+
+      setupEventListeners() {
+        // Close modal on escape key
+        window.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") this.closeModals();
+        });
+      }
+    };
+
+    // Initialize application when DOM is ready
+    document.addEventListener("DOMContentLoaded", () => {
+      App.init();
+    });
+  </script>
+</body>
+</html>
