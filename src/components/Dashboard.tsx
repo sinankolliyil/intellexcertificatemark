@@ -87,8 +87,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
       <div className="bg-emerald-50/70 border border-emerald-200/80 rounded-xl p-3.5 mb-6 flex items-start space-x-3 text-xs text-emerald-950">
         <Info className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
         <div className="flex-1">
-          <span className="font-bold">Direct Codebase Storage (No localStorage): </span>
-          All newly added candidates, mark entries, and qualitative comments are saved directly into your project codebase at <strong>src/data/students.json</strong> via Next.js backend API. Your data is persisted permanently across all browsers, devices, and git commits.
+          <span className="font-bold">Automatic Persistent Auto-Save: </span>
+          All newly added candidates, rubric scores, and evaluator comments are automatically saved and preserved as you work on this hosted site. Your changes remain saved when you refresh or return. You can also export a cohort CSV or JSON backup anytime.
         </div>
       </div>
 

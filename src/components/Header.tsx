@@ -43,9 +43,9 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Action Bar */}
           <div className="flex items-center space-x-2 sm:space-x-3">
             {/* Storage notice pill */}
-            <div className="hidden lg:flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700/80 text-xs text-slate-300" title="Data is saved directly to project codebase (src/data/students.json)">
+            <div className="hidden lg:flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700/80 text-xs text-slate-300" title="All edits, evaluations, and new students are saved automatically">
               <Database className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Direct Codebase Storage</span>
+              <span>Auto-Save Active</span>
             </div>
 
             {/* Export All CSV Button */}

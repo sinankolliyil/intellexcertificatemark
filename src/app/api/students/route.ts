@@ -29,17 +29,27 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: "Invalid payload format" }, { status: 400 });
     }
 
-    // Write directly to project code/file on disk
-    await fs.writeFile(DATA_FILE_PATH, JSON.stringify(studentsToSave, null, 2), "utf-8");
-
-    return NextResponse.json({
-      success: true,
-      message: "Data saved directly to code (src/data/students.json)",
-      count: studentsToSave.length
-    });
+    // Write directly to project code/file on disk if filesystem is writable
+    try {
+      await fs.writeFile(DATA_FILE_PATH, JSON.stringify(studentsToSave, null, 2), "utf-8");
+      return NextResponse.json({
+        success: true,
+        message: "Data saved directly to code (src/data/students.json)",
+        count: studentsToSave.length
+      });
+    } catch (writeErr: unknown) {
+      const writeMsg = writeErr instanceof Error ? writeErr.message : String(writeErr);
+      // On read-only serverless platforms like Vercel, return 200 with readOnly flag so browser storage takes over cleanly
+      return NextResponse.json({
+        success: true,
+        readOnly: true,
+        message: "Hosted environment filesystem is read-only; browser persistence handles storage.",
+        details: writeMsg
+      });
+    }
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error("Error saving students to file:", error);
+    console.error("Error saving students:", error);
     return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }
