@@ -24,9 +24,9 @@ yarn-error.log*
 .DS_Store
 *.pem
 
-# IDE & agents
-.vscode/
-.idea/
+# TypeScript build info
+*.tsbuildinfo
+next-env.d.ts
 
 # Vercel
 .vercel

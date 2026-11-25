@@ -83,13 +83,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-      {/* Local Storage Disclaimer Banner */}
-      <div className="bg-blue-50/70 border border-blue-200/80 rounded-xl p-3.5 mb-6 flex items-start space-x-3 text-xs text-blue-900">
-        <Info className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+      {/* Codebase Storage Banner */}
+      <div className="bg-emerald-50/70 border border-emerald-200/80 rounded-xl p-3.5 mb-6 flex items-start space-x-3 text-xs text-emerald-950">
+        <Info className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
         <div className="flex-1">
-          <span className="font-bold">Offline & Local Device Storage: </span>
-          All candidate assessments, marks, and evaluator notes are saved securely in your browser&apos;s localStorage on this device.
-          To transfer records to another workstation or prevent data loss when clearing browser cache, use the <strong>Backup / Restore</strong> button in the header.
+          <span className="font-bold">Direct Codebase Storage (No localStorage): </span>
+          All newly added candidates, mark entries, and qualitative comments are saved directly into your project codebase at <strong>src/data/students.json</strong> via Next.js backend API. Your data is persisted permanently across all browsers, devices, and git commits.
         </div>
       </div>
 

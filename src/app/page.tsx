@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Student } from "@/types/assessment";
-import { getStoredStudents, saveStoredStudents } from "@/lib/storage";
+import { fetchStudentsFromCode, saveStudentsToCode } from "@/lib/storage";
 import { downloadIndividualCSV, exportAllStudentsCSV, exportBackupJSON } from "@/lib/exportUtils";
 import { calculateStudentStats } from "@/lib/calculations";
 import { Header } from "@/components/Header";
@@ -34,17 +34,20 @@ export default function HomePage() {
   // Student currently selected for printing
   const [printCandidate, setPrintCandidate] = useState<Student | null>(null);
 
-  // Load students from localStorage upon mount
+  // Load students directly from codebase on mount
   useEffect(() => {
-    const loaded = getStoredStudents();
-    setStudents(loaded);
-    setIsLoaded(true);
+    async function loadStudents() {
+      const data = await fetchStudentsFromCode();
+      setStudents(data);
+      setIsLoaded(true);
+    }
+    loadStudents();
   }, []);
 
-  // Sync to localStorage whenever students change
+  // Save changes directly to codebase file (src/data/students.json) whenever data changes
   useEffect(() => {
     if (isLoaded) {
-      saveStoredStudents(students);
+      saveStudentsToCode(students);
     }
   }, [students, isLoaded]);
 
@@ -63,7 +66,7 @@ export default function HomePage() {
 
     const updated = [newStudent, ...students];
     setStudents(updated);
-    saveStoredStudents(updated);
+    saveStudentsToCode(updated);
 
     // Immediately open assessment for this student
     setActiveStudentId(newStudent.id);
@@ -83,14 +86,14 @@ export default function HomePage() {
       return s;
     });
     setStudents(updated);
-    saveStoredStudents(updated);
+    saveStudentsToCode(updated);
   };
 
   // Handle Delete Student
   const handleDeleteStudent = (studentId: string) => {
     const updated = students.filter((s) => s.id !== studentId);
     setStudents(updated);
-    saveStoredStudents(updated);
+    saveStudentsToCode(updated);
     if (activeStudentId === studentId) {
       setActiveView("dashboard");
       setActiveStudentId(null);
@@ -182,7 +185,7 @@ export default function HomePage() {
       }
     });
     setStudents(merged);
-    saveStoredStudents(merged);
+    saveStudentsToCode(merged);
   };
 
   const activeStudent = students.find((s) => s.id === activeStudentId) || null;

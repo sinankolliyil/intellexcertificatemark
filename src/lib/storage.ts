@@ -1,73 +1,49 @@
 import { Student } from "@/types/assessment";
-import { SAMPLE_STUDENTS } from "@/data/sampleStudents";
+import initialStudents from "@/data/students.json";
 
-export const STORAGE_KEY = "intellex_assessment_data_v1";
-
-export function getStoredStudents(): Student[] {
+/**
+ * Fetches students directly from the project codebase (src/data/students.json)
+ * via the Next.js API route. Completely eliminates browser localStorage.
+ */
+export async function fetchStudentsFromCode(): Promise<Student[]> {
   if (typeof window === "undefined") {
-    return SAMPLE_STUDENTS;
+    return initialStudents as Student[];
   }
 
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
+    const res = await fetch("/api/students", { cache: "no-store" });
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        return data;
       }
     }
   } catch (error) {
-    console.error("Failed to parse students from localStorage:", error);
+    console.warn("Unable to fetch /api/students, falling back to static code data:", error);
   }
 
-  // Fallback to sample students and persist
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(SAMPLE_STUDENTS));
-  } catch (e) {
-    console.error("Failed to write initial students to localStorage:", e);
-  }
-  return SAMPLE_STUDENTS;
+  return initialStudents as Student[];
 }
 
-export function saveStoredStudents(students: Student[]): boolean {
+/**
+ * Saves updated students directly into project files on disk (src/data/students.json)
+ * via Next.js Route Handler with Node.js fs.
+ */
+export async function saveStudentsToCode(students: Student[]): Promise<boolean> {
   if (typeof window === "undefined") return false;
+
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(students));
-    return true;
+    const res = await fetch("/api/students", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(students),
+    });
+
+    return res.ok;
   } catch (error) {
-    console.error("Failed to save students to localStorage:", error);
+    console.error("Failed to write students to codebase file:", error);
     return false;
   }
 }
-
-export function updateStoredStudentsWithNewData(incoming: Student[]): Student[] {
-  const current = getStoredStudents();
-  const merged = [...current];
-
-  incoming.forEach((candidate) => {
-    const idx = merged.findIndex(
-      (s) => s.id === candidate.id || (s.studentId && candidate.studentId && s.studentId === candidate.studentId)
-    );
-    if (idx >= 0) {
-      merged[idx] = {
-        ...merged[idx],
-        ...candidate,
-        marks: {
-          ...merged[idx].marks,
-          ...candidate.marks,
-        },
-        comments: {
-          ...merged[idx].comments,
-          ...candidate.comments,
-        },
-        updatedAt: new Date().toISOString(),
-      };
-    } else {
-      merged.push(candidate);
-    }
-  });
-
-  saveStoredStudents(merged);
-  return merged;
-}
-
