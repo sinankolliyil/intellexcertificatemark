@@ -40,14 +40,34 @@ export function saveStoredStudents(students: Student[]): boolean {
   }
 }
 
-export function resetStoredStudents(): Student[] {
-  if (typeof window !== "undefined") {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(SAMPLE_STUDENTS));
-    } catch (e) {
-      console.error("Failed to reset localStorage:", e);
+export function updateStoredStudentsWithNewData(incoming: Student[]): Student[] {
+  const current = getStoredStudents();
+  const merged = [...current];
+
+  incoming.forEach((candidate) => {
+    const idx = merged.findIndex(
+      (s) => s.id === candidate.id || (s.studentId && candidate.studentId && s.studentId === candidate.studentId)
+    );
+    if (idx >= 0) {
+      merged[idx] = {
+        ...merged[idx],
+        ...candidate,
+        marks: {
+          ...merged[idx].marks,
+          ...candidate.marks,
+        },
+        comments: {
+          ...merged[idx].comments,
+          ...candidate.comments,
+        },
+        updatedAt: new Date().toISOString(),
+      };
+    } else {
+      merged.push(candidate);
     }
-  }
-  return SAMPLE_STUDENTS;
+  });
+
+  saveStoredStudents(merged);
+  return merged;
 }
 

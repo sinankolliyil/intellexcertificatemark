@@ -156,24 +156,33 @@ export default function HomePage() {
     downloadIndividualCSV(student, stats);
   };
 
-  // Handle JSON Restore
-  const handleRestore = (imported: Student[], mode: "replace" | "merge") => {
-    if (mode === "replace") {
-      setStudents(imported);
-      saveStoredStudents(imported);
-    } else {
-      const merged = [...students];
-      imported.forEach((candidate) => {
-        const idx = merged.findIndex((s) => s.id === candidate.id || s.studentId === candidate.studentId);
-        if (idx >= 0) {
-          merged[idx] = candidate;
-        } else {
-          merged.push(candidate);
-        }
-      });
-      setStudents(merged);
-      saveStoredStudents(merged);
-    }
+  // Handle JSON Restore / Update: update existing records with new data and append new students (no destructive full reset)
+  const handleRestore = (imported: Student[]) => {
+    const merged = [...students];
+    imported.forEach((candidate) => {
+      const idx = merged.findIndex(
+        (s) => s.id === candidate.id || (s.studentId && candidate.studentId && s.studentId === candidate.studentId)
+      );
+      if (idx >= 0) {
+        merged[idx] = {
+          ...merged[idx],
+          ...candidate,
+          marks: {
+            ...merged[idx].marks,
+            ...candidate.marks,
+          },
+          comments: {
+            ...merged[idx].comments,
+            ...candidate.comments,
+          },
+          updatedAt: new Date().toISOString(),
+        };
+      } else {
+        merged.push(candidate);
+      }
+    });
+    setStudents(merged);
+    saveStoredStudents(merged);
   };
 
   const activeStudent = students.find((s) => s.id === activeStudentId) || null;

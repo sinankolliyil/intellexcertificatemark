@@ -10,7 +10,7 @@ interface BackupRestoreModalProps {
   students: Student[];
   onClose: () => void;
   onExportBackup: () => void;
-  onRestore: (importedStudents: Student[], mode: "replace" | "merge") => void;
+  onRestore: (importedStudents: Student[]) => void;
 }
 
 export const BackupRestoreModal: React.FC<BackupRestoreModalProps> = ({
@@ -52,9 +52,9 @@ export const BackupRestoreModal: React.FC<BackupRestoreModalProps> = ({
     reader.readAsText(file);
   };
 
-  const handleExecuteRestore = (mode: "replace" | "merge") => {
+  const handleExecuteRestore = () => {
     if (!candidateStudents) return;
-    onRestore(candidateStudents, mode);
+    onRestore(candidateStudents);
     onClose();
   };
 
@@ -132,26 +132,19 @@ export const BackupRestoreModal: React.FC<BackupRestoreModalProps> = ({
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                   <span>Valid Backup Detected</span>
                 </div>
-                <p>
-                  Found <strong>{candidateStudents.length}</strong> candidate assessment record(s) in {fileName}.
+                <p className="text-xs text-emerald-900 mt-1 leading-relaxed">
+                  Found <strong>{candidateStudents.length}</strong> candidate record(s) in {fileName}. Incoming records will update existing candidates and add any new students. Existing records are preserved and never deleted.
                 </p>
 
-                <div className="mt-3 pt-3 border-t border-emerald-200 flex items-center gap-2">
+                <div className="mt-3 pt-3 border-t border-emerald-200">
                   <button
                     type="button"
-                    onClick={() => handleExecuteRestore("merge")}
-                    className="flex-1 py-1.5 px-3 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-xs"
-                    title="Merges new students and updates existing IDs without wiping other records"
+                    onClick={handleExecuteRestore}
+                    className="w-full py-2 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-xs flex items-center justify-center space-x-1.5 transition-colors"
+                    title="Updates existing candidates with new marks and details and adds any new candidates"
                   >
-                    Merge with Existing
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleExecuteRestore("replace")}
-                    className="flex-1 py-1.5 px-3 rounded-md bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs shadow-xs"
-                    title="Wipes all existing records and replaces them with this backup"
-                  >
-                    Replace All Data
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>Update Data with New Records ({candidateStudents.length} Students)</span>
                   </button>
                 </div>
               </div>

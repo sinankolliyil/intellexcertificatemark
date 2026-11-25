@@ -1606,9 +1606,7 @@
           <strong>Storage Notice:</strong> All student assessments and marks are stored locally in your browser's persistent storage on this device. Data will remain after refreshing or reopening the browser. To transfer records between devices or safeguard your work, use the <strong>Backup / Restore</strong> option.
         </span>
       </div>
-      <button class="btn btn-outline btn-sm" onclick="App.resetToSampleData()" style="flex-shrink:0;">
-        Reset Sample Data
-      </button>
+      
     </div>
 
     <!-- VIEW CONTAINER: DASHBOARD -->
@@ -2000,12 +1998,9 @@
 
           <div id="restorePreviewBox" style="display:none; background:var(--slate-50); border:1px solid var(--slate-300); border-radius:var(--radius-md); padding:0.85rem; margin-bottom:0.75rem; font-size:0.825rem;">
             <strong id="restorePreviewText">—</strong>
-            <div style="display:flex; gap:0.5rem; margin-top:0.75rem;">
-              <button class="btn btn-primary btn-sm" onclick="App.executeRestore('replace')">
-                Replace Current Data
-              </button>
-              <button class="btn btn-white btn-sm" onclick="App.executeRestore('merge')">
-                Merge with Existing Data
+            <div style="margin-top:0.75rem;">
+              <button class="btn btn-primary btn-sm" onclick="App.executeRestore()" style="width:100%;">
+                Update Data with New Records
               </button>
             </div>
           </div>
@@ -3364,33 +3359,38 @@
         reader.readAsText(file);
       },
 
-      executeRestore(mode) {
+      executeRestore() {
         if (!this.restoreDataCandidate) return;
 
-        if (mode === "replace") {
-          this.students = this.restoreDataCandidate;
-          this.saveStudents();
-          this.closeModals();
-          this.renderStats();
-          this.renderStudentsList();
-          this.showToast(`Restored ${this.students.length} students (all previous records replaced).`, "success");
-        } else if (mode === "merge") {
-          let added = 0;
-          this.restoreDataCandidate.forEach(candidate => {
-            const existingIdx = this.students.findIndex(s => s.id === candidate.id || s.studentId === candidate.studentId);
-            if (existingIdx >= 0) {
-              this.students[existingIdx] = candidate;
-            } else {
-              this.students.push(candidate);
-              added++;
-            }
-          });
-          this.saveStudents();
-          this.closeModals();
-          this.renderStats();
-          this.renderStudentsList();
-          this.showToast(`Merged backup records. Total students now: ${this.students.length}.`, "success");
-        }
+        let updated = 0;
+        let added = 0;
+        this.restoreDataCandidate.forEach(candidate => {
+          const existingIdx = this.students.findIndex(s => s.id === candidate.id || (s.studentId && candidate.studentId && s.studentId === candidate.studentId));
+          if (existingIdx >= 0) {
+            this.students[existingIdx] = {
+              ...this.students[existingIdx],
+              ...candidate,
+              marks: {
+                ...this.students[existingIdx].marks,
+                ...candidate.marks
+              },
+              comments: {
+                ...this.students[existingIdx].comments,
+                ...candidate.comments
+              },
+              updatedAt: new Date().toISOString()
+            };
+            updated++;
+          } else {
+            this.students.push(candidate);
+            added++;
+          }
+        });
+        this.saveStudents();
+        this.closeModals();
+        this.renderStats();
+        this.renderStudentsList();
+        this.showToast(`Updated data with new records (${updated} updated, ${added} added). Total students: ${this.students.length}.`, "success");
       },
 
       // --- UTILITIES ---
