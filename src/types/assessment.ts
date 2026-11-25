@@ -44,6 +44,7 @@ export interface CategoryStat {
   marksObtained: number;
   isComplete: boolean;
   percentage: number | null;
+  qrScore: number | null;
 }
 
 export interface EvaluationLevel {
@@ -61,6 +62,7 @@ export interface StudentStats {
   totalPossibleMarks: number;
   isFullyAssessed: boolean;
   finalPercentage: number | null;
+  qrScore: number | null;
   evaluationLevel: EvaluationLevel;
   categoryStats: CategoryStat[];
 }

@@ -22,11 +22,11 @@ export const PrintableReport: React.FC<PrintableReportProps> = ({ student }) => 
               IX
             </div>
             <div>
-              <h1 className="text-2xl font-extrabold tracking-tight uppercase font-serif text-slate-900">
-                INTELLEX ACADEMY
+              <h1 className="text-xl font-extrabold tracking-tight uppercase font-serif text-slate-900">
+                INTELLEX VERIFIED COMPETENCY FRAMEWORK
               </h1>
               <p className="text-xs font-semibold text-slate-600 tracking-wider uppercase">
-                Engineering Assessment & Competency Evaluation Board
+                INTERNAL OPERATIONS — Standardized Evaluation & Real-Project Assessment Architecture (v2.4)
               </p>
             </div>
           </div>
@@ -70,40 +70,53 @@ export const PrintableReport: React.FC<PrintableReportProps> = ({ student }) => 
       </div>
 
       {/* Summary Score Boxes */}
-      <div className="grid grid-cols-3 gap-4 mb-6 text-center">
+      <div className="grid grid-cols-4 gap-3 mb-6 text-center">
         <div className="border border-slate-300 rounded-lg p-3 bg-white">
-          <div className="text-2xl font-extrabold font-mono text-slate-900">
+          <div className="text-xl font-extrabold font-mono text-slate-900">
             {stats.totalMarksObtained} <span className="text-xs text-slate-500 font-normal">/ {TOTAL_POSSIBLE_MARKS}</span>
           </div>
-          <div className="text-[11px] font-bold text-slate-600 uppercase mt-1">
+          <div className="text-[10px] font-bold text-slate-600 uppercase mt-1">
             Total Marks Obtained
           </div>
         </div>
 
         <div className="border border-slate-300 rounded-lg p-3 bg-white">
-          <div className="text-2xl font-extrabold font-mono text-slate-900">
+          <div className="text-xl font-extrabold font-mono text-slate-900">
             {stats.isFullyAssessed && stats.finalPercentage !== null ? (
               `${stats.finalPercentage.toFixed(1)}%`
             ) : (
-              <span className="text-sm font-bold text-amber-700">NOT ASSESSED</span>
+              <span className="text-xs font-bold text-amber-700">NOT ASSESSED</span>
             )}
           </div>
-          <div className="text-[11px] font-bold text-slate-600 uppercase mt-1">
+          <div className="text-[10px] font-bold text-slate-600 uppercase mt-1">
             Overall Percentage
           </div>
         </div>
 
         <div className="border border-slate-300 rounded-lg p-3 bg-white">
-          <div className="text-base font-extrabold text-slate-900 mt-1">
+          <div className="text-xl font-extrabold font-mono text-emerald-700">
+            {stats.isFullyAssessed && stats.qrScore !== null ? (
+              `${stats.qrScore.toFixed(1)} / 10`
+            ) : (
+              <span className="text-xs font-bold text-amber-700">PENDING</span>
+            )}
+          </div>
+          <div className="text-[10px] font-bold text-slate-600 uppercase mt-1">
+            Public QR Metric
+          </div>
+        </div>
+
+        <div className="border border-slate-300 rounded-lg p-3 bg-white">
+          <div className="text-sm font-extrabold text-slate-900 mt-1">
             {stats.isFullyAssessed ? (
               stats.evaluationLevel.label
             ) : (
-              <span className="text-xs text-amber-700 font-bold">
+              <span className="text-[11px] text-amber-700 font-bold">
                 INCOMPLETE ({stats.totalAssessed}/{TOTAL_CRITERIA_COUNT})
               </span>
             )}
           </div>
-          <div className="text-[11px] font-bold text-slate-600 uppercase mt-1">
+          <div className="text-[10px] font-bold text-slate-600 uppercase mt-1">
             Evaluation Band Level
           </div>
         </div>
@@ -133,7 +146,7 @@ export const PrintableReport: React.FC<PrintableReportProps> = ({ student }) => 
                 {/* Category Header Row */}
                 <tr className="bg-slate-200 font-bold text-slate-900 border-t border-b border-slate-300">
                   <td colSpan={4} className="p-2 text-xs">
-                    {cat.name} — Subtotal: {catStat?.marksObtained ?? 0} / {cat.maxMarks} Marks ({catStat?.assessedCount ?? 0}/{cat.criteria.length} Assessed)
+                    {cat.name} — Subtotal: {catStat?.marksObtained ?? 0} / {cat.maxMarks} Marks ({catStat?.assessedCount ?? 0}/{cat.criteria.length} Assessed) {catStat?.qrScore !== null && catStat?.qrScore !== undefined ? `· Category QR Score: ${catStat.qrScore.toFixed(1)} / 10` : ""}
                   </td>
                 </tr>
 
@@ -145,24 +158,30 @@ export const PrintableReport: React.FC<PrintableReportProps> = ({ student }) => 
 
                   return (
                     <tr key={crit.id} className="border-b border-slate-200 hover:bg-slate-50">
-                      <td className="p-2 font-medium text-slate-900">
-                        {idx + 1}. {crit.name}
+                      <td className="p-2 text-slate-900 w-2/5">
+                        <div className="font-bold text-slate-900 text-xs">{idx + 1}. {crit.name}</div>
+                        <div className="text-[10px] text-slate-600 mt-0.5 leading-snug">
+                          <strong className="text-slate-700">What You Monitor:</strong> {crit.monitor}
+                        </div>
+                        <div className="text-[10px] text-slate-500 mt-0.5 leading-snug">
+                          <strong className="text-slate-600">Fallback Assessment:</strong> {crit.fallback}
+                        </div>
                       </td>
-                      <td className="p-2 text-center font-mono font-bold">
+                      <td className="p-2 text-center font-mono font-bold w-20 align-top">
                         {isAssessed ? (
                           <span>{rawMark} / {crit.maxMarks}</span>
                         ) : (
                           <span className="text-slate-400 font-normal">— / {crit.maxMarks}</span>
                         )}
                       </td>
-                      <td className="p-2 text-center font-semibold">
+                      <td className="p-2 text-center font-semibold w-24 align-top">
                         {isAssessed ? (
                           <span className="text-emerald-700">ASSESSED</span>
                         ) : (
                           <span className="text-amber-700">NOT ASSESSED</span>
                         )}
                       </td>
-                      <td className="p-2 text-slate-700 text-[11px] italic">
+                      <td className="p-2 text-slate-700 text-[11px] italic align-top">
                         {comment}
                       </td>
                     </tr>

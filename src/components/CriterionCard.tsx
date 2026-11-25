@@ -113,7 +113,7 @@ export const CriterionCard: React.FC<CriterionCardProps> = ({
 
       {/* What Evaluator Should Monitor (Source Rubric Requirement) */}
       <div className="mt-2.5 text-xs text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-100 leading-relaxed">
-        <strong className="text-slate-800">What to Monitor: </strong>
+        <strong className="text-slate-800">What You Monitor: </strong>
         {criterion.monitor}
       </div>
 
@@ -222,7 +222,7 @@ export const CriterionCard: React.FC<CriterionCardProps> = ({
             {criterion.fallback && (
               <div>
                 <div className="font-bold text-amber-900 uppercase text-[10px] tracking-wider mb-1">
-                  Source Fallback Assessment Task:
+                  If No Real-Project Evidence → Fallback Assessment:
                 </div>
                 <div className="bg-amber-50/80 p-2.5 rounded border border-amber-200 text-amber-950 font-medium">
                   {criterion.fallback}

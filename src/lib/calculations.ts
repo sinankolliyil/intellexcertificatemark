@@ -47,6 +47,7 @@ export function calculateStudentStats(student: Student): StudentStats {
     totalMarksObtained += catMarks;
     const isComplete = catAssessed === cat.criteria.length;
     const catPercentage = isComplete ? (catMarks / cat.maxMarks) * 100 : null;
+    const qrScore = isComplete ? Number((catMarks / 10).toFixed(1)) : null;
 
     return {
       categoryId: cat.id,
@@ -57,12 +58,14 @@ export function calculateStudentStats(student: Student): StudentStats {
       totalCriteria: cat.criteria.length,
       marksObtained: catMarks,
       isComplete,
-      percentage: catPercentage
+      percentage: catPercentage,
+      qrScore
     };
   });
 
   const isFullyAssessed = totalAssessed === TOTAL_CRITERIA_COUNT;
   let finalPercentage: number | null = null;
+  let overallQrScore: number | null = null;
   let evaluationLevel: EvaluationLevel = {
     label: "NOT ASSESSED",
     class: "band-unassessed",
@@ -73,6 +76,7 @@ export function calculateStudentStats(student: Student): StudentStats {
 
   if (isFullyAssessed) {
     finalPercentage = (totalMarksObtained / TOTAL_POSSIBLE_MARKS) * 100;
+    overallQrScore = Number(((totalMarksObtained / TOTAL_POSSIBLE_MARKS) * 10).toFixed(1));
     evaluationLevel = getEvaluationBand(finalPercentage);
   }
 
@@ -83,6 +87,7 @@ export function calculateStudentStats(student: Student): StudentStats {
     totalPossibleMarks: TOTAL_POSSIBLE_MARKS,
     isFullyAssessed,
     finalPercentage,
+    qrScore: overallQrScore,
     evaluationLevel,
     categoryStats
   };

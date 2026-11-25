@@ -86,6 +86,22 @@ export const SummaryTab: React.FC<SummaryTabProps> = ({
 
             <div className="h-10 w-px bg-slate-700 hidden sm:block" />
 
+            {/* Quality Rating (QR) Metric */}
+            <div>
+              <div className="text-xs text-slate-400 font-medium">Public QR Score</div>
+              {stats.isFullyAssessed && stats.qrScore !== null ? (
+                <div className="text-2xl sm:text-3xl font-extrabold font-mono text-emerald-400">
+                  {stats.qrScore.toFixed(1)} <span className="text-xs text-slate-400 font-normal">/ 10</span>
+                </div>
+              ) : (
+                <div className="text-sm font-bold text-amber-400 py-1">
+                  PENDING
+                </div>
+              )}
+            </div>
+
+            <div className="h-10 w-px bg-slate-700 hidden sm:block" />
+
             {/* Evaluation Band */}
             <div>
               <div className="text-xs text-slate-400 font-medium">Evaluation Level</div>
@@ -226,6 +242,13 @@ export const SummaryTab: React.FC<SummaryTabProps> = ({
                     <span className="text-lg font-mono font-extrabold text-slate-900">
                       {catStat?.marksObtained ?? 0}
                       <span className="text-xs font-normal text-slate-400 ml-1">/ {cat.maxMarks}</span>
+                    </span>
+                  </div>
+
+                  <div className="mt-1 flex items-baseline justify-between text-xs">
+                    <span className="text-slate-500 font-medium">Category QR Rating:</span>
+                    <span className="font-mono font-bold text-slate-800">
+                      {catStat?.qrScore !== null && catStat?.qrScore !== undefined ? `${catStat.qrScore.toFixed(1)} / 10` : "—"}
                     </span>
                   </div>
 

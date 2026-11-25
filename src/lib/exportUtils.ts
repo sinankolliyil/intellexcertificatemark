@@ -34,21 +34,23 @@ export function downloadIndividualCSV(student: Student, stats: StudentStats): vo
   csv += `"Assessment Date:","${escapeCsv(student.assessmentDate || "N/A")}"\n`;
   csv += `"Total Assessed Criteria:","${stats.totalAssessed} of ${stats.totalCriteriaCount}"\n`;
   csv += `"Overall Marks:","${stats.totalMarksObtained} / ${stats.totalPossibleMarks}"\n`;
+  csv += `"Public QR Score:","${stats.isFullyAssessed && stats.qrScore !== null ? stats.qrScore.toFixed(1) + ' / 10' : 'NOT ASSESSED'}"\n`;
   csv += `"Final Percentage:","${stats.isFullyAssessed && stats.finalPercentage !== null ? stats.finalPercentage.toFixed(2) + '%' : 'NOT ASSESSED (All 38 criteria required)'}"\n`;
   csv += `"Evaluation Level:","${stats.isFullyAssessed ? stats.evaluationLevel.label : 'NOT ASSESSED'}"\n\n`;
 
   // 2. Category Summary
   csv += `"CATEGORY SUMMARY"\n`;
-  csv += `"Category","Category Max Marks","Marks Awarded","Status","Category Percentage"\n`;
+  csv += `"Category","Category Max Marks","Marks Awarded","Category QR (/10)","Status","Category Percentage"\n`;
   stats.categoryStats.forEach(cs => {
     const pctStr = cs.isComplete && cs.percentage !== null ? `${cs.percentage.toFixed(1)}%` : "Pending";
-    csv += `"${escapeCsv(cs.categoryName)}",${cs.maxMarks},${cs.marksObtained},"${cs.isComplete ? 'Complete' : 'Incomplete'}","${pctStr}"\n`;
+    const qrStr = cs.isComplete && cs.qrScore !== null ? `${cs.qrScore.toFixed(1)} / 10` : "Pending";
+    csv += `"${escapeCsv(cs.categoryName)}",${cs.maxMarks},${cs.marksObtained},"${qrStr}","${cs.isComplete ? 'Complete' : 'Incomplete'}","${pctStr}"\n`;
   });
   csv += `\n`;
 
   // 3. Criterion-by-Criterion Table
   csv += `"DETAILED CRITERION ASSESSMENT"\n`;
-  csv += `"Category","Criterion Name","Maximum Marks","Marks Awarded","Assessment Status","Evaluator Comments"\n`;
+  csv += `"Category","Sub-Task Name","Maximum Marks","Marks Awarded","Assessment Status","What You Monitor","Fallback Assessment Task","Evaluator Comments"\n`;
 
   CRITERIA_CATEGORIES.forEach(cat => {
     cat.criteria.forEach(crit => {
@@ -58,7 +60,7 @@ export function downloadIndividualCSV(student: Student, stats: StudentStats): vo
       const statusStr = isAssessed ? "ASSESSED" : "NOT ASSESSED";
       const comment = student.comments ? (student.comments[crit.id] || "") : "";
 
-      csv += `"${escapeCsv(cat.shortName)}","${escapeCsv(crit.name)}",${crit.maxMarks},${typeof markStr === 'number' ? markStr : '"' + markStr + '"'},"${statusStr}","${escapeCsv(comment)}"\n`;
+      csv += `"${escapeCsv(cat.shortName)}","${escapeCsv(crit.name)}",${crit.maxMarks},${typeof markStr === 'number' ? markStr : '"' + markStr + '"'},"${statusStr}","${escapeCsv(crit.monitor)}","${escapeCsv(crit.fallback)}","${escapeCsv(comment)}"\n`;
     });
   });
 
@@ -71,7 +73,7 @@ export function exportAllStudentsCSV(students: Student[]): void {
 
   let csv = "\uFEFF";
   csv += `"INTELLEX - ALL STUDENTS ASSESSMENT MASTER RECORD"\n\n`;
-  csv += `"Student Name","Student ID","Email","Track","Batch","Evaluator","Assessment Date","Assessed Criteria Count","Completion Status","Category 1: Technical (Max 95)","Category 2: Problem Solving (Max 100)","Category 3: Collaboration (Max 100)","Category 4: Communication (Max 100)","Category 5: Reliability (Max 100)","Total Marks Obtained","Overall Max Marks","Final Percentage","Evaluation Level"\n`;
+  csv += `"Student Name","Student ID","Email","Track","Batch","Evaluator","Assessment Date","Assessed Criteria Count","Completion Status","Category 1: Technical (Max 95)","Category 2: Problem Solving (Max 100)","Category 3: Collaboration (Max 100)","Category 4: Communication (Max 100)","Category 5: Reliability (Max 100)","Total Marks Obtained","Overall Max Marks","Public QR Metric (/10)","Final Percentage","Evaluation Level"\n`;
 
   students.forEach(student => {
     const stats = calculateStudentStats(student);
@@ -82,10 +84,11 @@ export function exportAllStudentsCSV(students: Student[]): void {
     const c5 = stats.categoryStats[4]?.marksObtained ?? 0;
 
     const pctStr = stats.isFullyAssessed && stats.finalPercentage !== null ? stats.finalPercentage.toFixed(2) + "%" : "NOT ASSESSED";
+    const qrStr = stats.isFullyAssessed && stats.qrScore !== null ? stats.qrScore.toFixed(1) + " / 10" : "NOT ASSESSED";
     const levelStr = stats.isFullyAssessed ? stats.evaluationLevel.label : "NOT ASSESSED";
     const statusStr = stats.isFullyAssessed ? "Fully Assessed" : "Pending Completion";
 
-    csv += `"${escapeCsv(student.name)}","${escapeCsv(student.studentId || '')}","${escapeCsv(student.email || '')}","${escapeCsv(student.track || '')}","${escapeCsv(student.batch || '')}","${escapeCsv(student.evaluator || '')}","${escapeCsv(student.assessmentDate || '')}",${stats.totalAssessed},"${statusStr}",${c1},${c2},${c3},${c4},${c5},${stats.totalMarksObtained},${TOTAL_POSSIBLE_MARKS},"${pctStr}","${levelStr}"\n`;
+    csv += `"${escapeCsv(student.name)}","${escapeCsv(student.studentId || '')}","${escapeCsv(student.email || '')}","${escapeCsv(student.track || '')}","${escapeCsv(student.batch || '')}","${escapeCsv(student.evaluator || '')}","${escapeCsv(student.assessmentDate || '')}",${stats.totalAssessed},"${statusStr}",${c1},${c2},${c3},${c4},${c5},${stats.totalMarksObtained},${TOTAL_POSSIBLE_MARKS},"${qrStr}","${pctStr}","${levelStr}"\n`;
   });
 
   const filename = `intellex_all_students_assessment_${new Date().toISOString().split('T')[0]}.csv`;
