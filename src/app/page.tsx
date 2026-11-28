@@ -18,6 +18,10 @@ import { PrintableReport } from "@/components/PrintableReport";
 export default function HomePage() {
   const [students, setStudents] = useState<Student[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
+  const [loadAttempt, setLoadAttempt] = useState(0);
   const [activeView, setActiveView] = useState<"dashboard" | "assess">("dashboard");
   const [activeStudentId, setActiveStudentId] = useState<string | null>(null);
 
@@ -34,21 +38,47 @@ export default function HomePage() {
   // Student currently selected for printing
   const [printCandidate, setPrintCandidate] = useState<Student | null>(null);
 
-  // Load students directly from codebase on mount
   useEffect(() => {
-    async function loadStudents() {
-      const data = await fetchStudentsFromCode();
-      setStudents(data);
-      setIsLoaded(true);
-    }
-    loadStudents();
-  }, []);
+    let cancelled = false;
 
-  // Save changes directly to codebase file (src/data/students.json) whenever data changes
-  useEffect(() => {
-    if (isLoaded) {
-      saveStudentsToCode(students);
+    async function loadStudents() {
+      try {
+        const data = await fetchStudentsFromCode();
+        if (!cancelled) {
+          setStudents(data);
+          setLoadError(null);
+          setIsLoaded(true);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setLoadError(error instanceof Error ? error.message : "Unable to load shared student data.");
+        }
+      }
     }
+
+    loadStudents();
+    return () => {
+      cancelled = true;
+    };
+  }, [loadAttempt]);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    setSaveError(null);
+    setSaveStatus("saving");
+    const timeout = window.setTimeout(async () => {
+      try {
+        await saveStudentsToCode(students);
+        setSaveError(null);
+        setSaveStatus("saved");
+      } catch (error) {
+        setSaveError(error instanceof Error ? error.message : "Unable to save shared student data.");
+        setSaveStatus("idle");
+      }
+    }, 500);
+
+    return () => window.clearTimeout(timeout);
   }, [students, isLoaded]);
 
   // Handle Add Student
@@ -66,7 +96,6 @@ export default function HomePage() {
 
     const updated = [newStudent, ...students];
     setStudents(updated);
-    saveStudentsToCode(updated);
 
     // Immediately open assessment for this student
     setActiveStudentId(newStudent.id);
@@ -86,14 +115,12 @@ export default function HomePage() {
       return s;
     });
     setStudents(updated);
-    saveStudentsToCode(updated);
   };
 
   // Handle Delete Student
   const handleDeleteStudent = (studentId: string) => {
     const updated = students.filter((s) => s.id !== studentId);
     setStudents(updated);
-    saveStudentsToCode(updated);
     if (activeStudentId === studentId) {
       setActiveView("dashboard");
       setActiveStudentId(null);
@@ -185,10 +212,48 @@ export default function HomePage() {
       }
     });
     setStudents(merged);
-    saveStudentsToCode(merged);
+  };
+
+  const handleRetrySave = async () => {
+    setSaveError(null);
+    setSaveStatus("saving");
+    try {
+      await saveStudentsToCode(students);
+      setSaveStatus("saved");
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : "Unable to save shared student data.");
+      setSaveStatus("idle");
+    }
   };
 
   const activeStudent = students.find((s) => s.id === activeStudentId) || null;
+
+  if (!isLoaded) {
+    return (
+      <main className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+        <div className="max-w-lg w-full rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h1 className="text-lg font-bold text-slate-900">
+            {loadError ? "Unable to load shared student data" : "Loading shared student data..."}
+          </h1>
+          {loadError && (
+            <>
+              <p className="mt-2 text-sm text-rose-700">{loadError}</p>
+              <p className="mt-2 text-sm text-slate-600">
+                Check that Supabase is configured and its student_data table has been created.
+              </p>
+              <button
+                type="button"
+                onClick={() => setLoadAttempt((attempt) => attempt + 1)}
+                className="mt-4 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
+              >
+                Retry
+              </button>
+            </>
+          )}
+        </div>
+      </main>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
@@ -199,6 +264,23 @@ export default function HomePage() {
         onOpenBackupRestore={() => setIsBackupModalOpen(true)}
         totalStudents={students.length}
       />
+      <p className="bg-rose-50 px-4 py-2 text-center text-sm text-rose-800">
+        Public access: anyone with this URL can view, edit, restore, or delete all student records.
+      </p>
+      <div aria-live="polite">
+        {saveError ? (
+          <div className="flex items-center justify-between gap-4 bg-rose-50 px-4 py-2 text-sm text-rose-800">
+            <span>Could not save changes to the shared database: {saveError}</span>
+            <button type="button" onClick={handleRetrySave} className="font-semibold underline">
+              Retry save
+            </button>
+          </div>
+        ) : saveStatus === "saving" ? (
+          <p className="bg-amber-50 px-4 py-2 text-center text-sm text-amber-800">Saving changes to shared database...</p>
+        ) : saveStatus === "saved" ? (
+          <p className="bg-emerald-50 px-4 py-2 text-center text-sm text-emerald-800">Changes saved to shared database</p>
+        ) : null}
+      </div>
 
       {/* Main View Router */}
       <main className="flex-1">
